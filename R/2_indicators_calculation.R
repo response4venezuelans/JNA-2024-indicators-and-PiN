@@ -119,8 +119,7 @@ main_merged <- main_merged %>%
   ungroup()%>%
   mutate(
     INT_D3 = ifelse(
-      INT_D3_Q1_nationality == 1 &
-        (INT_D3_Q2_finding_work == 1 | INT_D3_Q2_work == 1),
+      INT_D3_Q1_nationality == 1,
       1,
       0
     ),
