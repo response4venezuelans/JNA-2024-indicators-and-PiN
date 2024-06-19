@@ -69,13 +69,13 @@ weighted_pins_indicator <- pins_indicator |>
 
 ds_per_sector <- weighted_pins_indicator |>
   mutate(
-    Food_security_ds = FS_CARI,
+    Food_security_ds = rowSums(weighted_pins_indicator[, c("FS_CARI")], na.rm = TRUE),
     Health_ds =  rowSums(weighted_pins_indicator[, c("HE_D1", "HE_D4")], na.rm = TRUE),
-    Humanitarian_transport_ds = HT_D1,
+    Humanitarian_transport_ds = rowSums(weighted_pins_indicator[, c("HT_D1")], na.rm = TRUE),
     Integration_ds = rowSums(weighted_pins_indicator[, c("INT_D1", "INT_D2", "INT_D3", "INT_D4")], na.rm = TRUE),
     Nutrition_ds = rowSums(weighted_pins_indicator[, c("NUT_D1", "NUT_D4", "NUT_D5", "NUT_D8", "NUT_D10")], na.rm = TRUE),
     Protection_ds = rowSums(weighted_pins_indicator[, c("PRO_D1", "PRO_D2", "PRO_D3", "PRO_D4", "PRO_D5")], na.rm = TRUE),
-    Child_protection_ds = CP_D1,
+    Child_protection_ds = rowSums(weighted_pins_indicator[, c("CP_D1")], na.rm = TRUE),
     Gender_based_violence_ds = rowSums(weighted_pins_indicator[, c("GBV_D1", "GBV_D3")], na.rm = TRUE),
     HT_S_ds = rowSums(weighted_pins_indicator[, c("HTS_D1", "HTS_D2")], na.rm = TRUE),
     Shelter_ds = rowSums(weighted_pins_indicator[, c("SHE_D1", "SHE_D2", "SHE_D3", "SHE_D4")], na.rm = TRUE),
@@ -123,7 +123,7 @@ df_pin <- df_pin |>
     "Education_ds"
   )], na.rm = TRUE)) |>
   #calculate if included in intersector pin with the threshold of 33.3% of intersector ds
-mutate(intersector_pin = ifelse(intersector_ds > 0.31, 1, 0))
+mutate(intersector_pin = ifelse(intersector_ds > 0.333, 1, 0))
   # ggplot of intersector_ds to see distribution
   
 ggplot(df_pin, aes(x = intersector_ds)) +
@@ -143,7 +143,7 @@ pin_intersector <- sum(df_pin$"intersector_pin") / nrow(df_pin)
 ### Step 3: Identify individuals with deprivations in each sector. Now, having the figure of the Intersectoral MPI, we can identify who is part of the MPI of each sector. This ensures that, although a person may have all the deprivations in a sector, they will only be part of the MPI if they have more than 33.3% of the total deprivations.
 
 
-df_pin_intersector <- df_pin |>
+df_sectoral_pin <- df_pin |>
   select(-intersector_ds) |>
   #include in sectorial pins if included in intersectorial pin (intersector== 1) and there is a privation in the specific sector (sector_ds>0)
   mutate(across(
