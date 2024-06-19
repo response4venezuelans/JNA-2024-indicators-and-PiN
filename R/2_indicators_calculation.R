@@ -129,30 +129,29 @@ main_merged <- main_merged %>%
   
   # nutrition
   
-  group_by(id_hogar) %>%
   mutate(
-    NUT_D1 = ifelse(any(
+    NUT_D1 = ifelse(
       (NUT_D1_Q1 == "pregnant" | NUT_D1_Q1 == "breastfeeding") &
         (NUT_D1_Q2_nutritional_evaluation == 0 |
            NUT_D1_Q2_nutritional_counceling == 0 |
-           NUT_D1_Q2_micronutrient_delivery == 0), na.rm = TRUE), 1, 0),
-    NUT_D4 = ifelse(any(
+           NUT_D1_Q2_micronutrient_delivery == 0),  1, 0),
+    NUT_D4 = ifelse(
       NUT_D4_Q1_nutritional_evaluation == 0 |
         NUT_D4_Q1_lactation_counseling == 0 |
-        NUT_D4_Q1_non_lactation_counseling == 0, na.rm = TRUE), 1, 0),
-    NUT_D5 = ifelse(any(NUT_D5_Q1 == "no" | NUT_D5_Q2 != "none", na.rm = TRUE), 1, 0),
+        NUT_D4_Q1_non_lactation_counseling == 0, 1, 0),
+    NUT_D5 = ifelse(NUT_D5_Q1 == "no" | NUT_D5_Q2 != "none",  1, 0),
     NUT_D8 = case_when(
-      age2 < 24 ~ ifelse(any(
+      age2 < 24 ~ ifelse(
         NUT_D8_Q1_nutritional_assessment_weight_height_arm_measurement == 0 |
           NUT_D8_Q1_counseling_support_breastfeeding_evaluation_positions_difficulties == 0 |
           NUT_D8_Q1_counseling_support_non_breastfed_babies_formula_preparation_use_cleaning_feeding_utensils == 0 |
           NUT_D8_Q1_counseling_trained_personnel_feeding_solid_foods_diversity_preparation_feeding_children == 0 |
-          NUT_D8_Q1_delivery_vitamin_mineral_supplements_iron_vitamin_a_powder_drops_syrups == 0, na.rm = TRUE ), 1, 0),
-      age2 > 23 ~ ifelse(any(
+          NUT_D8_Q1_delivery_vitamin_mineral_supplements_iron_vitamin_a_powder_drops_syrups == 0,  1, 0),
+      age2 > 23 ~ ifelse(
         NUT_D8_Q1_nutritional_assessment_weight_height_arm_measurement == 0 |
           NUT_D8_Q1_counseling_trained_personnel_feeding_solid_foods_diversity_preparation_feeding_children == 0 |
-          NUT_D8_Q1_delivery_vitamin_mineral_supplements_iron_vitamin_a_powder_drops_syrups == 0, na.rm = TRUE), 1, 0)),
-    NUT_D10 = ifelse(any(
+          NUT_D8_Q1_delivery_vitamin_mineral_supplements_iron_vitamin_a_powder_drops_syrups == 0,  1, 0)),
+    NUT_D10 = ifelse(
       sum(
         NUT_D10_Q1_breastmilk,
         NUT_D10_Q1_grains_roots,
@@ -162,9 +161,9 @@ main_merged <- main_merged %>%
         NUT_D10_Q1_eggs,
         NUT_D10_Q1_dark_leaf_vegetables,
         NUT_D10_Q1_other_vegetables,
-        NUT_D10_Q1_other_fruits) < 5, na.rm = TRUE), 1, 0)
+        NUT_D10_Q1_other_fruits) < 5,  1, 0)
   ) %>%
-  ungroup()%>%
+
   
   # protection
   mutate(
