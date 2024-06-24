@@ -95,12 +95,17 @@ main_merged <- main_merged %>%
     CARI_FES = round(CARI_unrounded_FES)
   ) |>
   mutate(FS_CARI = ifelse(CARI_FES > 2, 1, 0)) %>%
+rename(IND_FS_max=FS_CARI)
+
   
   # health
   group_by(id_hogar)%>%
   mutate(HE_D1 = ifelse(any(HE_D1_Q1 == "yes" &
                           HE_D1_Q2 == "no",na.rm = TRUE), 1, 0),
          HE_D4 = ifelse(any(INT_D2_Q2 == "no", na.rm = TRUE), 1,0)) %>%
+  mutate(IND_HE = ifelse(HE_D1 == 1 | HE_D4 == 1, 1, 0))%>%
+  rename(IND_HE_max=IND_HE)%>%
+  ungroup()%>% 
   
   # humanitarian transportation
   mutate(HT_D1 = ifelse(
@@ -109,6 +114,7 @@ main_merged <- main_merged %>%
     1,
     0
   )) %>%
+  rename(IND_HT_max=HT_D1)%>%
   
   # integration
 
@@ -125,6 +131,10 @@ main_merged <- main_merged %>%
     ),
     INT_D4 = ifelse(INT_D4_Q1_none == 1, 1, 0)
   )%>%
+  mutate(IND_INT_D1_max = ifelse(INT_D1 == 1 | INT_D2 == 1, 1, 0))%>%
+  rename(IND_INT_D2_max=INT_D3)%>%
+  rename(IND_INT_D3_max=INT_D4)%>%
+  ungroup()%>% 
 
   
   # nutrition
@@ -163,7 +173,9 @@ main_merged <- main_merged %>%
         NUT_D10_Q1_other_vegetables,
         NUT_D10_Q1_other_fruits) < 5,  1, 0)
   ) %>%
-
+  rename(IND_NUT_D1=NUT_D1)%>%
+  mutate(IND_NUT_D2 = ifelse(NUT_D4 == 1 | NUT_D8 == 1, 1, 0))%>%  
+  mutate(IND_NUT_D3 = ifelse(NUT_D10 == 1 | NUT_D5 == 1, 1, 0))%>%  
   
   # protection
   mutate(
@@ -210,6 +222,13 @@ main_merged <- main_merged %>%
     HTS_D2 = ifelse(HTS_D2_Q1 != "none" |
                       HTS_D2_Q1 != "not_applicable", 1, 0)
   )%>%
+  mutate(IND_PRO_D1_max = ifelse(PRO_D1 == 1 | PRO_D5 == 1, 1, 0))%>%  
+  mutate(IND_PRO_D2_max = ifelse(PRO_D2 == 1 | PRO_D4 == 1, 1, 0))%>% 
+  rename(IND_PRO_D3_max=PRO_D3)%>% 
+  rename(IND_PRO_CP_max=CP_D1)%>%
+  mutate(IND_PRO_GBV_max = ifelse(GBV_D1 == 1 | GBV_D3 == 1, 1, 0))%>% 
+  mutate(IND_PRO_HTS_max = ifelse(HTS_D1 == 1 | HTS_D2 == 1, 1, 0))%>% 
+  ungroup()%>% 
   
   # shelter
   mutate(
@@ -246,6 +265,11 @@ main_merged <- main_merged %>%
       0
     )
   ) %>%
+
+    mutate(IND_SHE_D1_max = ifelse(SHE_D1 == 1 | SHE_D2 == 1, 1, 0))%>% 
+    rename(IND_SHE_D2_max=SHE_D3)%>%
+    rename(IND_SHE_D3_max=SHE_D4)%>%
+  ungroup()%>% 
   
   # wash
   mutate(
@@ -307,6 +331,11 @@ main_merged <- main_merged %>%
       0
     )
   ) %>%
+
+  mutate(IND_WA_D1_max = ifelse(WA_D1 == 1 | WA_D2 == 1, 1, 0))%>% 
+  mutate(IND_WA_D2_max = ifelse(WA_D4 == 1 | WA_D6 == 1, 1, 0))%>% 
+  mutate(IND_WA_D3_max = ifelse(WA_D11 == 1 | WA_D8 == 1, 1, 0))%>% 
+  ungroup()%>% 
   
   # education
     
@@ -317,8 +346,8 @@ main_merged <- main_merged %>%
                           EDU_D2_Q2 != "in_hh_parents", na.rm = TRUE), 1, 0),
     EDU_D3 = ifelse(any(EDU_D3_Q1 < 5, na.rm = TRUE), 1, 0)
   ) %>%
+  mutate(IND_EDU_D1_max = ifelse(EDU_D1 == 1 | EDU_D3 == 1, 1, 0))%>% 
+  rename(IND_EDU_D2_max=EDU_D2)%>%
   ungroup()
 
 
-
-write_xlsx(main_merged, "main_merged.xlsx")
