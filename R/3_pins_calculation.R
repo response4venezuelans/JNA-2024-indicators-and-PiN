@@ -1,60 +1,40 @@
-###Step 1: Identify individuals with deprivations in each indicator (first cut based on predefined thresholds)
-
-pins_indicator <- main_merged |>
-  #Select only the previously calculated indicators
+ #Select only the previously calculated indicators
   select(
     c(
       #Food Security
-      FS_CARI,
+      IND_FS_max,
       #Health
-      HE_D1,
-      HE_D4,
+      IND_HE_max,
       #Humanitarian Transport
-      HT_D1,
+      IND_HT_max,
       #Integration
-      INT_D1,
-      INT_D2,
-      INT_D3,
-      INT_D4,
+      IND_INT_D1_max,
+      IND_INT_D2_max,
+      IND_INT_D3_max,
       #Nutrition
-      NUT_D1,
-      NUT_D4,
-      NUT_D5,
-      NUT_D8,
-      NUT_D10,
+      IND_NUT_D1,
+      IND_NUT_D2,
+      IND_NUT_D3,
       #Protection
-      PRO_D1,
-      PRO_D2,
-      PRO_D3,
-      PRO_D4,
-      PRO_D5,
-      #Child Protection
-      CP_D1,
-      #Gender Based Violence
-      GBV_D1,
-      GBV_D3,
-      #Human Traficking & Smuggling
-      HTS_D1,
-      HTS_D2,
+      IND_PRO_D1_max,
+      IND_PRO_D2_max,
+      IND_PRO_D3_max,
+      IND_PRO_CP_max,
+      IND_PRO_GBV_max,
+      IND_PRO_HTS_max,
       #Shelter
-      SHE_D1,
-      SHE_D2,
-      SHE_D3,
-      SHE_D4,
+      IND_SHE_D1_max,
+      IND_SHE_D2_max,
+      IND_SHE_D3_max,
       #Wash
-      WA_D1,
-      WA_D2,
-      WA_D4,
-      WA_D6,
-      WA_D8,
-      WA_D11,
+      IND_WA_D1_max,
+      IND_WA_D2_max,
+      IND_WA_D3_max,
       #Education
-      EDU_D1,
-      EDU_D2,
-      EDU_D3
+      IND_EDU_D1_max,
+      IND_EDU_D2_max
     )
   )
-
 
 # read indicators sheet with weights
 
@@ -69,18 +49,18 @@ weighted_pins_indicator <- pins_indicator |>
 
 ds_per_sector <- weighted_pins_indicator |>
   mutate(
-    Food_security_ds = rowSums(weighted_pins_indicator[, c("FS_CARI")], na.rm = TRUE),
-    Health_ds =  rowSums(weighted_pins_indicator[, c("HE_D1", "HE_D4")], na.rm = TRUE),
-    Humanitarian_transport_ds = rowSums(weighted_pins_indicator[, c("HT_D1")], na.rm = TRUE),
-    Integration_ds = rowSums(weighted_pins_indicator[, c("INT_D1", "INT_D2", "INT_D3", "INT_D4")], na.rm = TRUE),
-    Nutrition_ds = rowSums(weighted_pins_indicator[, c("NUT_D1", "NUT_D4", "NUT_D5", "NUT_D8", "NUT_D10")], na.rm = TRUE),
-    Protection_ds = rowSums(weighted_pins_indicator[, c("PRO_D1", "PRO_D2", "PRO_D3", "PRO_D4", "PRO_D5")], na.rm = TRUE),
-    Child_protection_ds = rowSums(weighted_pins_indicator[, c("CP_D1")], na.rm = TRUE),
-    Gender_based_violence_ds = rowSums(weighted_pins_indicator[, c("GBV_D1", "GBV_D3")], na.rm = TRUE),
-    HT_S_ds = rowSums(weighted_pins_indicator[, c("HTS_D1", "HTS_D2")], na.rm = TRUE),
-    Shelter_ds = rowSums(weighted_pins_indicator[, c("SHE_D1", "SHE_D2", "SHE_D3", "SHE_D4")], na.rm = TRUE),
-    Wash_ds = rowSums(weighted_pins_indicator[, c("WA_D1", "WA_D2", "WA_D4", "WA_D6", "WA_D8", "WA_D11")], na.rm = TRUE),
-    Education_ds = rowSums(weighted_pins_indicator[, c("EDU_D1", "EDU_D2", "EDU_D3")], na.rm = TRUE)
+    Food_security_ds = rowSums(weighted_pins_indicator[, c("IND_FS_max")], na.rm = TRUE),
+    Health_ds =  rowSums(weighted_pins_indicator[, c("IND_HE_max")], na.rm = TRUE),
+    Humanitarian_transport_ds = rowSums(weighted_pins_indicator[, c("IND_HT_max")], na.rm = TRUE),
+    Integration_ds = rowSums(weighted_pins_indicator[, c("IND_INT_D1_max", "IND_INT_D2_max", "IND_INT_D3_max")], na.rm = TRUE),
+    Nutrition_ds = rowSums(weighted_pins_indicator[, c("IND_NUT_D1","IND_NUT_D2", "IND_NUT_D3" )], na.rm = TRUE),
+    Protection_ds = rowSums(weighted_pins_indicator[, c("IND_PRO_D1_max", "IND_PRO_D2_max", "IND_PRO_D3_max", "IND_PRO_CP_max", "IND_PRO_GBV_max","IND_PRO_HTS_max")], na.rm = TRUE),
+    Child_protection_ds = rowSums(weighted_pins_indicator[, c("IND_PRO_CP_max")], na.rm = TRUE),
+    Gender_based_violence_ds = rowSums(weighted_pins_indicator[, c("IND_PRO_GBV_max")], na.rm = TRUE),
+    HT_S_ds = rowSums(weighted_pins_indicator[, c("IND_PRO_HTS_max")], na.rm = TRUE),
+    Shelter_ds = rowSums(weighted_pins_indicator[, c("IND_SHE_D1_max", "IND_SHE_D2_max", "IND_SHE_D3_max")], na.rm = TRUE),
+    Wash_ds = rowSums(weighted_pins_indicator[, c("IND_WA_D1_max","IND_WA_D2_max", "IND_WA_D3_max" )], na.rm = TRUE),
+    Education_ds = rowSums(weighted_pins_indicator[, c("IND_EDU_D1_max", "IND_EDU_D2_max")], na.rm = TRUE)
   )
 
 ### Step 2: Calculate the intersectorial MPI using the scores from each sector and using the 33.3% cutoff to identify those to the right of the distribution.
@@ -134,9 +114,6 @@ ggplot(df_pin, aes(x = intersector_ds)) +
   theme_minimal()
   
   
-
-
-
 pin_intersector <- sum(df_pin$"intersector_pin") / nrow(df_pin)
 
 
@@ -183,7 +160,7 @@ pins_final <- data.frame(
     "Education",
     "Intersector"
   ),
-  pins = round(colSums(df_pin_intersector) / nrow(df_pin_intersector) *
+  pins = round(colSums(df_sectoral_pin) / nrow(df_sectoral_pin) *
                  100, 1)
 )
 
