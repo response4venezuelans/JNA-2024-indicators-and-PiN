@@ -39,7 +39,7 @@ pins_indicator <- main_merged |>
 
 # read indicators sheet with weights
 
-df_weights <- read_excel("df_weights.xlsx")
+df_weights <- read_excel("R/df_weights.xlsx")
 
 #Multiply each column of pins_indicator by the respective weight in df_weights
 
