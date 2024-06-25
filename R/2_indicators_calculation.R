@@ -95,7 +95,7 @@ main_merged <- main_merged %>%
     CARI_FES = round(CARI_unrounded_FES)
   ) |>
   mutate(FS_CARI = ifelse(CARI_FES > 2, 1, 0)) %>%
-rename(IND_FS_max=FS_CARI)
+rename(IND_FS_max=FS_CARI)%>%
 
   
   # health
