@@ -1,4 +1,5 @@
- #Select only the previously calculated indicators
+pins_indicator <- main_merged |>
+  #Select only the previously calculated indicators
   select(
     c(
       #Food Security
