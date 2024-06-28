@@ -15,9 +15,9 @@ main_merged <- main_merged %>%
                            FCS <= 42.0 ~ 2, FCS >= 42.5 ~ 3)) %>%
   mutate(FCS_4pt = case_when(FCG == 1 ~ 4, FCG == 2 ~ 3, FCG == 3 ~ 1)) %>%
   mutate(FS_D1 = FCS_4pt) %>%
-  mutate(R_CSI = (FS_D2_Q1 * 1 + FS_D2_Q2 * 2 +
+  mutate(R_CSI = (FS_D2_Q1 * 1 + FS_D2_Q2 * 1 +
                     FS_D2_Q3 * 1 + FS_D2_Q4 * 3 +
-                    FS_D2_Q5 * 1)) %>%
+                    FS_D2_Q5 * 2)) %>%
   mutate(r_CSI_categories = case_when(R_CSI <= 4 ~ 1, R_CSI > 4 &
                                         R_CSI <= 18 ~ 2, ... =
                                         R_CSI >= 19 ~ 3))%>%
@@ -38,19 +38,16 @@ main_merged <- main_merged %>%
   ) %>%
   mutate(FS_D3 = Foodexp_4pt) %>%
   mutate(
-    stress_coping = ifelse(
+    stress_coping = case_when(
       FS_D4_Q1 == "already_used_12" |
         FS_D4_Q1 == "yes" |
         FS_D4_Q2 == "already_used_12" |
         FS_D4_Q2 == "yes" |
         FS_D4_Q3 == "already_used_12" |
-        FS_D4_Q3 == "yes",
-      1,
-      0
-    )
-  ) %>%
+        FS_D4_Q3 == "yes"~ 1,
+      TRUE ~ 0)) %>% 
   mutate(
-    crisis_coping = ifelse(
+    crisis_coping = case_when(
       FS_D4_Q4 == "already_used_12" |
         FS_D4_Q4 == "yes" |
         FS_D4_Q5 == "already_used_12" |
@@ -58,11 +55,14 @@ main_merged <- main_merged %>%
         FS_D4_Q6 == "already_used_12" |
         FS_D4_Q6 == "yes" |
         FS_D4_Q8 == "already_used_12" |
-        FS_D4_Q8 == "yes",
-      1,
-      0
-    )
-  ) %>%
+        FS_D4_Q8 == "yes"~ 1,
+      TRUE ~ 0)) %>%
+mutate(R_CSI = (FS_D2_Q1 * 1 + FS_D2_Q2 * 1 +
+                    FS_D2_Q3 * 1 + FS_D2_Q4 * 3 +
+                    FS_D2_Q5 * 2)) %>%
+  mutate(r_CSI_categories = case_when(R_CSI <= 4 ~ 1, R_CSI > 4 &
+                                        R_CSI <= 18 ~ 2, ... =
+                                        R_CSI >= 19 ~ 3))%>%
   mutate(
     emergency_coping = ifelse(
       FS_D4_Q7 == "already_used_12" |
@@ -92,76 +92,78 @@ main_merged <- main_merged %>%
       FCS_rCSI, Mean_coping_capacity_FES
     )), na.rm = TRUE),
     
-    CARI_FES = round(CARI_unrounded_FES)
+    CARI_FES = round_half_up(CARI_unrounded_FES)
   ) |>
-  mutate(FS_CARI = ifelse(CARI_FES > 2, 1, 0)) %>%
-rename(IND_FS_max=FS_CARI)%>%
+  mutate(IND_FS_max = ifelse(CARI_FES > 2, 1, 0)) %>%
+
 
   
   # health
   group_by(id_hogar)%>%
-  mutate(HE_D1 = ifelse(any(HE_D1_Q1 == "yes" &
-                          HE_D1_Q2 == "no",na.rm = TRUE), 1, 0),
-         HE_D4 = ifelse(any(INT_D2_Q2 == "no", na.rm = TRUE), 1,0)) %>%
-  mutate(IND_HE = ifelse(HE_D1 == 1 | HE_D4 == 1, 1, 0))%>%
-  rename(IND_HE_max=IND_HE)%>%
+  mutate(HE_D1 = case_when(any(HE_D1_Q1 == "yes" &
+                          HE_D1_Q2 == "no",na.rm = TRUE)~ 1,
+                          TRUE ~ 0),
+         HE_D4 = case_when(any(INT_D2_Q2 == "no", na.rm = TRUE)~ 1,
+                        TRUE ~ 0)) %>%
+  mutate(IND_HE_max = case_when(HE_D1 == 1 | HE_D4 == 1~ 1,
+                            TRUE ~ 0))%>%
   ungroup()%>% 
   
   # humanitarian transportation
-  mutate(HT_D1 = ifelse(
+  mutate(IND_HT_max = case_when(
     (HT_D1_Q1_walking == 1 |
-       HT_D1_Q1_bike == 1) & HT_D1_Q2 == "30m-plus",
-    1,
-    0
+       HT_D1_Q1_bike == 1) & HT_D1_Q2 == "30m-plus"~ 1,
+    TRUE ~ 0
   )) %>%
-  rename(IND_HT_max=HT_D1)%>%
   
   # integration
-
+  
   group_by(id_hogar)%>%
   mutate(
     INT_D1 = ifelse(any(INT_D1_Q1 == "finding_work", na.rm = TRUE), 1, 0),
-    INT_D2 = ifelse(any(INT_D2_Q1 == "no" |INT_D2_Q2 == "no" | INT_D2_Q3 == "no", na.rm = TRUE), 1, 0))%>%
+    INT_D2 = case_when(any(INT_D2_Q1 == "no" |INT_D2_Q2 == "no" | INT_D2_Q3 == "no", na.rm = TRUE)~ 1,
+                       TRUE ~ 0))%>%
   ungroup()%>%
   mutate(
-    INT_D3 = ifelse(
+    IND_INT_D2_max = ifelse(
       INT_D3_Q1_nationality == 1,
       1,
       0
     ),
-    INT_D4 = ifelse(INT_D4_Q1_none == 1, 1, 0)
+    IND_INT_D3_max = ifelse(INT_D4_Q1_none == 1, 1, 0)
   )%>%
   mutate(IND_INT_D1_max = ifelse(INT_D1 == 1 | INT_D2 == 1, 1, 0))%>%
-  rename(IND_INT_D2_max=INT_D3)%>%
-  rename(IND_INT_D3_max=INT_D4)%>%
   ungroup()%>% 
-
   
   # nutrition
   
   mutate(
-    NUT_D1 = ifelse(
+    IND_NUT_D1 = case_when(
       (NUT_D1_Q1 == "pregnant" | NUT_D1_Q1 == "breastfeeding") &
         (NUT_D1_Q2_nutritional_evaluation == 0 |
            NUT_D1_Q2_nutritional_counceling == 0 |
-           NUT_D1_Q2_micronutrient_delivery == 0),  1, 0),
+           NUT_D1_Q2_micronutrient_delivery == 0)~ 1,
+      TRUE ~ 0),
     NUT_D4 = ifelse(
       NUT_D4_Q1_nutritional_evaluation == 0 |
-        NUT_D4_Q1_lactation_counseling == 0 |
-        NUT_D4_Q1_non_lactation_counseling == 0, 1, 0),
-    NUT_D5 = ifelse(NUT_D5_Q1 == "no" | NUT_D5_Q2 != "none",  1, 0),
+        (NUT_D4_Q1_lactation_counseling == 0 | NUT_D4_Q1_non_lactation_counseling == 0), 1, 0),
+    NUT_D5 = case_when(NUT_D5_Q1 == "no" | NUT_D5_Q2 != "none"~ 1,
+                    TRUE ~ 0),
     NUT_D8 = case_when(
-      age2 < 24 ~ ifelse(
+      age2 < 24 ~ case_when(
         NUT_D8_Q1_nutritional_assessment_weight_height_arm_measurement == 0 |
-          NUT_D8_Q1_counseling_support_breastfeeding_evaluation_positions_difficulties == 0 |
-          NUT_D8_Q1_counseling_support_non_breastfed_babies_formula_preparation_use_cleaning_feeding_utensils == 0 |
+          (NUT_D8_Q1_counseling_support_breastfeeding_evaluation_positions_difficulties == 0 &
+          NUT_D8_Q1_counseling_support_non_breastfed_babies_formula_preparation_use_cleaning_feeding_utensils == 0)|
           NUT_D8_Q1_counseling_trained_personnel_feeding_solid_foods_diversity_preparation_feeding_children == 0 |
-          NUT_D8_Q1_delivery_vitamin_mineral_supplements_iron_vitamin_a_powder_drops_syrups == 0,  1, 0),
-      age2 > 23 ~ ifelse(
+          NUT_D8_Q1_delivery_vitamin_mineral_supplements_iron_vitamin_a_powder_drops_syrups == 0~ 1,
+        TRUE ~ 0),
+      age2 >= 24 & age2 <59 ~ case_when(
         NUT_D8_Q1_nutritional_assessment_weight_height_arm_measurement == 0 |
           NUT_D8_Q1_counseling_trained_personnel_feeding_solid_foods_diversity_preparation_feeding_children == 0 |
-          NUT_D8_Q1_delivery_vitamin_mineral_supplements_iron_vitamin_a_powder_drops_syrups == 0,  1, 0)),
-    NUT_D10 = ifelse(
+          NUT_D8_Q1_delivery_vitamin_mineral_supplements_iron_vitamin_a_powder_drops_syrups == 0~ 1,
+        TRUE ~ 0)),
+    NUT_D10 = case_when(
+      age2 >= 24 & age2 <59 ~ case_when(
       sum(
         NUT_D10_Q1_breastmilk,
         NUT_D10_Q1_grains_roots,
@@ -171,9 +173,8 @@ rename(IND_FS_max=FS_CARI)%>%
         NUT_D10_Q1_eggs,
         NUT_D10_Q1_dark_leaf_vegetables,
         NUT_D10_Q1_other_vegetables,
-        NUT_D10_Q1_other_fruits) < 5,  1, 0)
-  ) %>%
-  rename(IND_NUT_D1=NUT_D1)%>%
+        NUT_D10_Q1_other_fruits) < 5~ 1,
+      TRUE ~ 0)))%>%
   mutate(IND_NUT_D2 = ifelse(NUT_D4 == 1 | NUT_D8 == 1, 1, 0))%>%  
   mutate(IND_NUT_D3 = ifelse(NUT_D10 == 1 | NUT_D5 == 1, 1, 0))%>%  
   
@@ -181,9 +182,10 @@ rename(IND_FS_max=FS_CARI)%>%
   mutate(
     PRO_D1 = ifelse(PROT_D1_Q1 != "none", 1, 0),
     PRO_D2	= ifelse(PROT_D2_Q1 != "none", 1, 0),
-    PRO_D3 = ifelse(PROT_D3_Q1 == "yes" & PROT_D3_Q3 == "no", 1, 0),
-    PRO_D4 = ifelse(MH_6_no_valid_document == 1, 1, 0),
-    PRO_D5 = ifelse((PROT_D5_Q1 == "yes" |
+    PRO_D3 = case_when(PROT_D3_Q1 == "yes" & PROT_D3_Q3 == "no"~ 1,
+                       TRUE ~ 0),
+    IND_PRO_D3_max = ifelse(is.na(MH_6_no_valid_document), 0, ifelse(MH_6_no_valid_document == 1, 1, 0)),
+    PRO_D5 = case_when((PROT_D5_Q1 == "yes" |
                        PROT_D5_Q1 == "prefer_not_answer") & (
                          PROT_D5_Q2_threat == 1 |
                            PROT_D5_Q2_extortion == 1 |
@@ -192,47 +194,61 @@ rename(IND_FS_max=FS_CARI)%>%
                            PROT_D5_Q2_afraid_armed_group == 1 |
                            PROT_D5_Q2_persecuted_assaulted_discrim == 1 |
                            PROT_D5_Q2_recruited == 1
-                       ) ,
-                    1,
-                    0
+                       ) ~ 1,
+                       TRUE ~ 0
     )
   ) %>%
   
   # child protection
-  mutate(CP_D1 = ifelse(
+  mutate(IND_PRO_CP_max = case_when(
     (
-      CP_D1_Q1 != "none" |
-        CP_D1_Q1 != "dont_know" | CP_D1_Q1 != "prefer_not_answer"
+      CP_D1_Q1 == "family_separation" |
+      CP_D1_Q1 == "discrimination" |  
+      CP_D1_Q1 == "disrespectful_requests" |  
+      CP_D1_Q1 == "physical_psicological_violence" |  
+      CP_D1_Q1 == "sex_for_services_goods" |
+      CP_D1_Q1 == "child_labor"
     ) &
-      CP_D1_Q2 == "no",
-    1,
-    0
+      CP_D1_Q2 == "no"~ 1,
+    TRUE ~ 0
   )) %>%
+  
   
   # gender based violence
   group_by(id_hogar) %>%
   mutate(
     GBV_D1 = ifelse(any(GBV_D1_Q1 == "yes",na.rm = TRUE), 1, 0),
-    GBV_D3 = ifelse(any(GBV_D3_Q1 == 4 | GBV_D3_Q1 == 5,na.rm = TRUE), 1, 0)
+    GBV_D3 = case_when(any(GBV_D3_Q1 == 4 | GBV_D3_Q1 == 5,na.rm = TRUE)~ 1,
+                       TRUE ~ 0)
   ) %>%
   
-  # T&T
+  # H&T
   mutate(
-    HTS_D1 = ifelse(HTS_D1_Q1 == "yes" | HTS_D1_Q2 == "yes", 1, 0),
-    HTS_D2 = ifelse(HTS_D2_Q1 != "none" |
-                      HTS_D2_Q1 != "not_applicable", 1, 0)
-  )%>%
-  mutate(IND_PRO_D1_max = ifelse(PRO_D1 == 1 | PRO_D5 == 1, 1, 0))%>%  
-  mutate(IND_PRO_D2_max = ifelse(PRO_D2 == 1 | PRO_D4 == 1, 1, 0))%>% 
-  rename(IND_PRO_D3_max=PRO_D3)%>% 
-  rename(IND_PRO_CP_max=CP_D1)%>%
-  mutate(IND_PRO_GBV_max = ifelse(GBV_D1 == 1 | GBV_D3 == 1, 1, 0))%>% 
-  mutate(IND_PRO_HTS_max = ifelse(HTS_D1 == 1 | HTS_D2 == 1, 1, 0))%>% 
+    HTS_D1 = case_when(HTS_D1_Q1 == "yes" | HTS_D1_Q2 == "yes"~ 1,
+                       TRUE ~ 0),
+    HTS_D2 = case_when(HTS_D2_Q1 == "unpaid_longer_work" |
+                        HTS_D2_Q1 == "conditioned_work" |  
+                        HTS_D2_Q1 == "risky_work" |  
+                        HTS_D2_Q1 == "against_will_activities" |
+                        HTS_D2_Q1 == "unpleasant_treatment" | 
+                        HTS_D2_Q1 == "less_paid" |
+                        HTS_D2_Q1 == "no_pay" | 
+                        HTS_D2_Q1 == "prefer_not_answer"~ 1,
+                      TRUE ~ 0))%>%
+ 
+   mutate(IND_PRO_D1_max = case_when(PRO_D1 == 1 | PRO_D2 == 1~ 1,
+                                    TRUE ~ 0))%>%  
+  mutate(IND_PRO_D2_max = case_when(PRO_D3 == 1 | PRO_D5 == 1~ 1,
+                                    TRUE ~ 0))%>% 
+  mutate(IND_PRO_GBV_max = case_when(GBV_D1 == 1 | GBV_D3 == 1~ 1,
+                                     TRUE ~ 0))%>% 
+  mutate(IND_PRO_HTS_max = case_when(HTS_D1 == 1 | HTS_D2 == 1~ 1,
+                                     TRUE ~ 0))%>% 
   ungroup()%>% 
   
   # shelter
   mutate(
-    SHE_D1 = ifelse(
+    SHE_D1 = case_when(
       SHE_D1_Q1 == "street" |
         SHE_D1_Q1 == "shared_house" |
         SHE_D1_Q1 == "foster_family" |
@@ -251,29 +267,26 @@ rename(IND_FS_max=FS_CARI)%>%
         SHE_D1_Q3_gas == 1 |
         SHE_D1_Q3_garbage_collection == 1 |
         SHE_D1_Q3_electricity == 1 |
-        SHE_D1_Q3_acueduct == 1,
-      1,
-      0
+        SHE_D1_Q3_acueduct == 1~ 1,
+      TRUE ~ 0
     ),
     SHE_D2 = ifelse(MH_1 / SHE_D2_Q1 > 3 , 1, 0),
-    SHE_D3 = ifelse(SHE_D3_Q1_none == 0, 1, 0),
-    SHE_D4 = ifelse(
+    IND_SHE_D2_max = ifelse(SHE_D3_Q1_none == 0, 1, 0),
+    IND_SHE_D3_max = case_when(
       SHE_D4_Q1 == "some_eviction_risk" |
         SHE_D4_Q1 == "evicted" |
-        SHE_D4_Q1 == "prefer_not_answer",
-      1,
-      0
+        SHE_D4_Q1 == "prefer_not_answer"~ 1,
+      TRUE ~ 0
     )
   ) %>%
 
-    mutate(IND_SHE_D1_max = ifelse(SHE_D1 == 1 | SHE_D2 == 1, 1, 0))%>% 
-    rename(IND_SHE_D2_max=SHE_D3)%>%
-    rename(IND_SHE_D3_max=SHE_D4)%>%
+    mutate(IND_SHE_D1_max = case_when(SHE_D1 == 1 | SHE_D2 == 1~ 1,
+                                      TRUE ~ 0))%>% 
   ungroup()%>% 
   
   # wash
   mutate(
-    WA_D1 = ifelse(
+    WA_D1 = case_when(
       (WASH_D1_Q1 == "rain_water" |
           WASH_D1_Q1 == "bottled_water" |
           WASH_D1_Q1 == "water_supply" |
@@ -282,14 +295,22 @@ rename(IND_FS_max=FS_CARI)%>%
           WASH_D1_Q1 == "no_pump_well" |
           WASH_D1_Q1 == "surface_water" |
           WASH_D1_Q1 == "none") &
-        WASH_D1_Q2 == "30min_high",1,0),
-    WA_D2 = ifelse(
-      WASH_D2_Q1 == 1 |
-        (WASH_D2_Q2 != "yes" | WASH_D2_Q2 != "not_aplicable"),
-      1,
-      0
-    ),
-    WA_D4 = ifelse(
+        WASH_D1_Q2 == "30min_high"~ 1,
+      TRUE ~ 0),
+    WA_D2 = case_when(
+        (WASH_D2_Q1 =="not_enough_water"|
+        WASH_D2_Q1 !="drink"|
+        WASH_D2_Q1 !="cook"| 
+        WASH_D2_Q1 !="hygiene"| 
+        WASH_D2_Q1 !="other") &
+        (WASH_D2_Q2 == "less_3days_week" |
+           WASH_D2_Q2 == "3days_week" |
+           WASH_D2_Q2 == "more3days_week" |
+           WASH_D2_Q2 == "restricted_schedule" |
+           WASH_D2_Q2 == "dont_know" |
+           WASH_D2_Q2 == "prefer_not_answer")~ 1,
+      TRUE ~ 0),
+    WA_D4 = case_when(
       (
         WASH_D4_Q1 == "improvised_latrine" |
           WASH_D4_Q1 == "hanging_latrine" |
@@ -297,38 +318,34 @@ rename(IND_FS_max=FS_CARI)%>%
           WASH_D4_Q1 == "no_sanitation_service_pay_access" |
           WASH_D4_Q1 == "open_defecation"
       ) |
-        WASH_D4_Q2 == "yes",
-      1,
-      0
+        WASH_D4_Q2 == "yes"~ 1,
+      TRUE ~ 0
     ),
-    WA_D6 = ifelse(
+    WA_D6 = case_when(
       WASH_D6_Q1 == "river_stream" |
         WASH_D6_Q1 == "patio_lot" |
         WASH_D6_Q1 == "burnt" |
-        WASH_D6_Q1 == "dont_know",
-      1,
-      0
+        WASH_D6_Q1 == "dont_know"~ 1,
+      TRUE ~ 0
     ),
-    WA_D8 = ifelse(
+    WA_D8 = case_when(
       WASH_D8_Q1 == "water" |
         WASH_D8_Q1 == "soap" |
         WASH_D8_Q1 == "cant_handwash" |
-        WASH_D8_Q1 == "antibacterial_gel" ,
-      1,
-      0
+        WASH_D8_Q1 == "antibacterial_gel" ~ 1,
+      TRUE ~ 0
     ))%>%
     group_by(id_hogar) %>%
       mutate(
-    WA_D11 = ifelse(any(
+    WA_D11 = case_when(any(
       WASH_D11_Q1 == "no" |
         WASH_D11_Q1 == "panty_liners" |
         WASH_D11_Q1 == "cloth_fabric" |
         WASH_D11_Q1 == "toilet_paper" |
         WASH_D11_Q1 == "underwear_layers" |
         WASH_D11_Q1 == "not_applicable" |
-        WASH_D11_Q1 == "other", na.rm = TRUE),
-      1,
-      0
+        WASH_D11_Q1 == "other", na.rm = TRUE)~ 1,
+      TRUE ~ 0
     )
   ) %>%
 
@@ -342,12 +359,14 @@ rename(IND_FS_max=FS_CARI)%>%
   group_by(id_hogar) %>%
   mutate(
     EDU_D1 = ifelse(any(EDU_D1_Q1 == "no", na.rm = TRUE), 1, 0),
-    EDU_D2 = ifelse(any(EDU_D2_Q1 == "no" &
-                          EDU_D2_Q2 != "in_hh_parents", na.rm = TRUE), 1, 0),
-    EDU_D3 = ifelse(any(EDU_D3_Q1 < 5, na.rm = TRUE), 1, 0)
+    IND_EDU_D2_max = case_when(any(EDU_D2_Q1 == "no" &
+                          EDU_D2_Q2 != "in_hh_parents", na.rm = TRUE)~ 1,
+                       TRUE ~ 0),
+    EDU_D3 = ifelse(any(EDU_D1_Q1 == "yes" & EDU_D3_Q1 < 5, na.rm = TRUE), 1, 0)
   ) %>%
-  mutate(IND_EDU_D1_max = ifelse(EDU_D1 == 1 | EDU_D3 == 1, 1, 0))%>% 
-  rename(IND_EDU_D2_max=EDU_D2)%>%
+  mutate(IND_EDU_D1_max = case_when(EDU_D1 == 1 | EDU_D3 == 1~ 1,
+                                    TRUE ~ 0))%>% 
   ungroup()
+
 
 
