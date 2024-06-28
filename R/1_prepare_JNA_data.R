@@ -83,21 +83,23 @@ main_merged <- left_join(ind, main, by = c("_parent_index"="_index")) %>%
     DEMO_7 != "return_venezuela",
     DEMO_7 != "move_different_country"
   ) %>%
-  mutate(    # need to transform to double for indicator calculation
-    FS_D1_Q1 = as.double(as.factor(FS_D1_Q1)),
-    FS_D1_Q2 = as.double(as.factor(FS_D1_Q2)),
-    FS_D1_Q3 = as.double(as.factor(FS_D1_Q3)),
-    FS_D1_Q4 = as.double(as.factor(FS_D1_Q4)),
-    FS_D1_Q5 = as.double(as.factor(FS_D1_Q5)),
-    FS_D1_Q8 = as.double(as.factor(FS_D1_Q8)),
-    FS_D1_Q9 = as.double(as.factor(FS_D1_Q9)),
-    FS_D1_Q10 = as.double(as.factor(FS_D1_Q10)),
-    FS_D2_Q1 = as.double(as.factor(FS_D2_Q1)),
-    FS_D2_Q2 = as.double(as.factor(FS_D2_Q2)),
-    FS_D2_Q3 = as.double(as.factor(FS_D2_Q3)),
-    FS_D2_Q4 = as.double(as.factor(FS_D2_Q4)),
-    FS_D2_Q5 = as.double(as.factor(FS_D1_Q10))
-  )
+mutate(    
+  FS_D1_Q1 = as.numeric(as.character(FS_D1_Q1)),
+  FS_D1_Q2 = as.numeric(as.character(FS_D1_Q2)),
+  FS_D1_Q3 = as.numeric(as.character(FS_D1_Q3)),
+  FS_D1_Q4 = as.numeric(as.character(FS_D1_Q4)),
+  FS_D1_Q5 = as.numeric(as.character(FS_D1_Q5)),
+  FS_D1_Q8 = as.numeric(as.character(FS_D1_Q8)),
+  FS_D1_Q9 = as.numeric(as.character(FS_D1_Q9)),
+  FS_D1_Q10 = as.numeric(as.character(FS_D1_Q10)),
+  FS_D2_Q1 = as.numeric(as.character(FS_D2_Q1)),
+  FS_D2_Q2 = as.numeric(as.character(FS_D2_Q2)),
+  FS_D2_Q3 = as.numeric(as.character(FS_D2_Q3)),
+  FS_D2_Q4 = as.numeric(as.character(FS_D2_Q4)),
+  FS_D2_Q5 = as.numeric(as.character(FS_D1_Q5))
+)
+
+
 
 
 
