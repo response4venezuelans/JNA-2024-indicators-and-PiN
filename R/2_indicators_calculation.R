@@ -294,7 +294,7 @@ main_merged <- main_merged %>%
       !(str_detect(WASH_D2_Q1, "drink")& 
           str_detect(WASH_D2_Q1, "cook") & 
           str_detect(WASH_D2_Q1, "hygiene") & 
-          str_detect(WASH_D2_Q1, "other")) &
+          str_detect(WASH_D2_Q1, "other")) |
         (WASH_D2_Q2 == "less_3days_week" |
            WASH_D2_Q2 == "3days_week" |
            WASH_D2_Q2 == "more3days_week" |
