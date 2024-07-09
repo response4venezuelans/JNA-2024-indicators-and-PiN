@@ -145,7 +145,7 @@ main_merged <- main_merged %>%
       TRUE ~ 0),
    NUT_D4 = case_when(
       NUT_D4_Q1_nutritional_evaluation== 0 | 
-      (NUT_D4_Q1_lactation_counseling == 0 & NUT_D4_Q1_non_lactation_counseling == 0) ~ 1, 
+      (NUT_D4_Q1_lactation_counseling == 0  | NUT_D4_Q1_non_lactation_counseling == 0) ~ 1, 
       TRUE ~ 0),
     NUT_D5 = case_when(NUT_D5_Q1 == "no" | NUT_D5_Q2 != "none"~ 1,
                        TRUE ~ 0),
