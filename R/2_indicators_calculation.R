@@ -36,7 +36,7 @@ main_merged <- main_merged %>%
       FES >= .75 ~ 4
     )
   ) %>%
-  mutate(FS_D3 = Foodexp_4pt) %>%
+ mutate(FS_D3 = Foodexp_4pt) %>%
   mutate(
     stress_coping = case_when(
       FS_D4_Q1 == "already_used_12" |
@@ -44,7 +44,9 @@ main_merged <- main_merged %>%
         FS_D4_Q2 == "already_used_12" |
         FS_D4_Q2 == "yes" |
         FS_D4_Q3 == "already_used_12" |
-        FS_D4_Q3 == "yes"~ 1,
+        FS_D4_Q3 == "yes"|
+        FS_D4_Q8 == "already_used_12" |
+        FS_D4_Q8 == "yes"~ 1,
       TRUE ~ 0)) %>% 
   mutate(
     crisis_coping = case_when(
@@ -53,9 +55,7 @@ main_merged <- main_merged %>%
         FS_D4_Q5 == "already_used_12" |
         FS_D4_Q5 == "yes" |
         FS_D4_Q6 == "already_used_12" |
-        FS_D4_Q6 == "yes" |
-        FS_D4_Q8 == "already_used_12" |
-        FS_D4_Q8 == "yes"~ 1,
+        FS_D4_Q6 == "yes" ~ 1,
       TRUE ~ 0)) %>%
   mutate(R_CSI = (FS_D2_Q1 * 1 + FS_D2_Q2 * 1 +
                     FS_D2_Q3 * 1 + FS_D2_Q4 * 3 +
