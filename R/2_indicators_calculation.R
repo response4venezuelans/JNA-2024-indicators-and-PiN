@@ -336,7 +336,6 @@ main_merged <- main_merged %>%
         WASH_D11_Q1 == "cloth_fabric" |
         WASH_D11_Q1 == "toilet_paper" |
         WASH_D11_Q1 == "underwear_layers" |
-        WASH_D11_Q1 == "not_applicable" |
         WASH_D11_Q1 == "other", na.rm = TRUE)~ 1,
       TRUE ~ 0
     )
