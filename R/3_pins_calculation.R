@@ -45,10 +45,10 @@ pins_indicator <- main_merged %>%
       mutate(age1_rounded = floor(age1),
          age2_rounded = floor(age2),
          child_edu_cp=case_when(
-           age1_rounded>=0& age1_rounded<=17~"Yes",
+           age1_rounded>=0& age1_rounded<18~"Yes",
            TRUE~"No"),
          child_0_5=case_when(
-           age1_rounded>=0& age1_rounded<=5~"Yes",
+           age1_rounded>=0& age1_rounded<6~"Yes",
            TRUE~"No"),
          woman_preg_lact=case_when(MH_4=="women" & age1_rounded>=14 & (NUT_D1_Q1=="breastfeeding" |NUT_D1_Q1=="pregnant")~"Yes",
                                    TRUE~"No"))
