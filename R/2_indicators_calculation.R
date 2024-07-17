@@ -143,12 +143,16 @@ main_merged <- main_merged %>%
            NUT_D1_Q2_nutritional_counceling == 0 |
            NUT_D1_Q2_micronutrient_delivery == 0)~ 1,
       TRUE ~ 0),
+    
    NUT_D4 = case_when(
+     age2<7 ~ case_when(
       NUT_D4_Q1_nutritional_evaluation== 0 | 
       (NUT_D4_Q1_lactation_counseling == 0  | NUT_D4_Q1_non_lactation_counseling == 0) ~ 1, 
-      TRUE ~ 0),
-    NUT_D5 = case_when(NUT_D5_Q1 == "no" | NUT_D5_Q2 != "none"~ 1,
-                       TRUE ~ 0),
+      TRUE ~ 0)),
+   
+    NUT_D5 = case_when(
+      age2<7 ~ case_when(NUT_D5_Q1 == "no" | NUT_D5_Q2 != "none"~ 1,
+                       TRUE ~ 0)),
     NUT_D8 = case_when(
       age2 < 24 ~ case_when(
         NUT_D8_Q1_nutritional_assessment_weight_height_arm_measurement == 0 |
@@ -162,7 +166,20 @@ main_merged <- main_merged %>%
           NUT_D8_Q1_counseling_trained_personnel_feeding_solid_foods_diversity_preparation_feeding_children == 0 |
           NUT_D8_Q1_delivery_vitamin_mineral_supplements_iron_vitamin_a_powder_drops_syrups == 0~ 1,
         TRUE ~ 0)),
+   
     NUT_D10 = case_when(
+      age2 >= 6 & age2 <24 ~ case_when(
+        sum(
+          NUT_D10_Q1_breastmilk,
+          NUT_D10_Q1_grains_roots,
+          NUT_D10_Q1_legumes,
+          NUT_D10_Q1_lacteo_products,
+          NUT_D10_Q1_animal_protein,
+          NUT_D10_Q1_eggs,
+          NUT_D10_Q1_dark_leaf_vegetables,
+          NUT_D10_Q1_other_vegetables,
+          NUT_D10_Q1_other_fruits) < 5~ 1,
+        TRUE ~ 0),
       age2 >= 24 & age2 <59 ~ case_when(
         sum(
           NUT_D10_Q1_breastmilk,
@@ -258,8 +275,8 @@ main_merged <- main_merged %>%
         SHE_D1_Q2_wash_issues == 1 |
         SHE_D1_Q3_sewerage == 1 |
         SHE_D1_Q3_garbage_collection == 1 |
+        SHE_D1_Q3_gas == 1 |
         SHE_D1_Q3_electricity == 1 |
-        SHE_D1_Q3_gas==1|
         SHE_D1_Q3_acueduct == 1~ 1,
       TRUE ~ 0
     ),
@@ -336,6 +353,7 @@ main_merged <- main_merged %>%
         WASH_D11_Q1 == "cloth_fabric" |
         WASH_D11_Q1 == "toilet_paper" |
         WASH_D11_Q1 == "underwear_layers" |
+        WASH_D11_Q1 == "not_applicable" |
         WASH_D11_Q1 == "other", na.rm = TRUE)~ 1,
       TRUE ~ 0
     )
@@ -348,16 +366,15 @@ main_merged <- main_merged %>%
   
   # education
   
-  group_by(id_hogar) %>%
   mutate(
-    EDU_D1 = ifelse(any(EDU_D1_Q1 == "no", na.rm = TRUE), 1, 0),
-    IND_EDU_D2_max = case_when(any(EDU_D2_Q1 == "no" &
-                                     EDU_D2_Q2 != "in_hh_parents", na.rm = TRUE)~ 1,
-                               TRUE ~ 0),
-    EDU_D3 = ifelse(any(EDU_D1_Q1 == "yes" & EDU_D3_Q1 < 5, na.rm = TRUE), 1, 0)
-  ) %>%
-  mutate(IND_EDU_D1_max = case_when(EDU_D1 == 1 | EDU_D3 == 1~ 1,
-                                    TRUE ~ 0))%>% 
-  ungroup()
+    EDU_D1 = ifelse(EDU_D1_Q1 == "no", 1, 0),
+    IND_EDU_D2_max = case_when(EDU_D2_Q1 == "no" & EDU_D2_Q2 != "in_hh_parents" ~ 1,
+      TRUE ~ 0
+    ),
+    EDU_D3 = ifelse(EDU_D1_Q1 == "yes" & EDU_D3_Q1 < 5, 1, 0)) %>%
+  mutate(
+    IND_EDU_D1_max = case_when(EDU_D1 == 1 | EDU_D3 == 1 ~ 1,TRUE ~ 0
+    )
+  )
 
 
