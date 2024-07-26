@@ -38,7 +38,7 @@ library(janitor)
 library(visdat)
 library(dplyr)
 
-kobo_setup(url = "https://kobo.unhcr.org/", token = "766a6560dcac5f4fbf071d6048ef5dff00c99a9e")
+kobo_setup(url = "https://kobo.unhcr.org/", token = "XXX)
 
 
 ###Run the script below to see list of your surveys
@@ -47,7 +47,7 @@ asset_list
 
 ##Find the survey you want to analyse and enter the name as below
 
-uid <- filter(asset_list, name == "R4V JNA Panamá 2024") |> ## change the survey name accordingly as shown in KoBo
+uid <- filter(asset_list, name == "XXX") |> ## change the survey name accordingly as shown in KoBo
   pull(uid)
 
 ###You will see the number of submissions and name.
