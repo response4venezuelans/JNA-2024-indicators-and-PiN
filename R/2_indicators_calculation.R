@@ -2,7 +2,7 @@
 
 main_merged <- main_merged %>%
   
-  # food security
+  # food security with FES
   mutate(
     FCS = (
       FS_D1_Q1 * 2 + FS_D1_Q5 * 1 +
@@ -57,12 +57,6 @@ main_merged <- main_merged %>%
         FS_D4_Q6 == "already_used_12" |
         FS_D4_Q6 == "yes" ~ 1,
       TRUE ~ 0)) %>%
-  mutate(R_CSI = (FS_D2_Q1 * 1 + FS_D2_Q2 * 1 +
-                    FS_D2_Q3 * 1 + FS_D2_Q4 * 3 +
-                    FS_D2_Q5 * 2)) %>%
-  mutate(r_CSI_categories = case_when(R_CSI <= 4 ~ 1, R_CSI > 4 &
-                                        R_CSI <= 18 ~ 2, ... =
-                                        R_CSI >= 19 ~ 3))%>%
   mutate(
     emergency_coping = ifelse(
       FS_D4_Q7 == "already_used_12" |
@@ -96,7 +90,98 @@ main_merged <- main_merged %>%
   ) %>%
   mutate(IND_FS_max = ifelse(CARI_FES > 2, 1, 0))%>%
 
+# food security without FES
+main_merged <- main_merged %>%
+  mutate(
+    FCS = (
+      FS_D1_Q1 * 2 + FS_D1_Q5 * 1 +
+        FS_D1_Q8 * 1 + FS_D1_Q4 * 4 +
+        FS_D1_Q3 * 4 + FS_D1_Q2 * 3 +
+        FS_D1_Q9 * .5 + FS_D1_Q10 * .5
+    )
+  ) %>%
+  mutate(FCG = case_when(FCS <= 28.0 ~ 1, FCS >= 28.5 &
+                           FCS <= 42.0 ~ 2, FCS >= 42.5 ~ 3)) %>%
+  mutate(FCS_4pt = case_when(FCG == 1 ~ 4, FCG == 2 ~ 3, FCG == 3 ~ 1)) %>%
+  mutate(FS_D1 = FCS_4pt) %>%
   
+  mutate(R_CSI = (FS_D2_Q1 * 1 + FS_D2_Q2 * 1 +
+                    FS_D2_Q3 * 1 + FS_D2_Q4 * 3 +
+                    FS_D2_Q5 * 2)) %>%
+  mutate(r_CSI_categories = case_when(R_CSI <= 4 ~ 1, R_CSI > 4 &
+                                        R_CSI <= 18 ~ 2, ... =
+                                        R_CSI >= 19 ~ 3))%>%
+  mutate(
+    FCS_rCSI = ifelse(FCS_4pt %in% c(1, 3, 4), FCS_4pt, NA),
+    FCS_rCSI = ifelse(FCS_4pt == 1 &
+                        R_CSI > 4, 2, FCS_rCSI)
+  ) %>%
+  # mutate(FS_D2 = FCS_rCSI)%>%
+  # mutate(
+  #   FES = FS_D3_Q1 / (FS_D3_Q1 + FS_D3_Q2),
+  #   Foodexp_4pt = case_when(
+  #     FES <= .4999999 ~ 1,
+  #     FES >= .5 & FES <= .64999999 ~ 2,
+  #     FES >= .65 & FES <= .74999999 ~ 3,
+  #     FES >= .75 ~ 4
+  #   )
+  # ) %>%
+ #  mutate(FS_D3 = Foodexp_4pt) %>%
+  mutate(
+    stress_coping = case_when(
+      FS_D4_Q1 == "already_used_12" |
+        FS_D4_Q1 == "yes" |
+        FS_D4_Q2 == "already_used_12" |
+        FS_D4_Q2 == "yes" |
+        FS_D4_Q3 == "already_used_12" |
+        FS_D4_Q3 == "yes"|
+        FS_D4_Q8 == "already_used_12" |
+        FS_D4_Q8 == "yes"~ 1,
+      TRUE ~ 0)) %>% 
+  mutate(
+    crisis_coping = case_when(
+      FS_D4_Q4 == "already_used_12" |
+        FS_D4_Q4 == "yes" |
+        FS_D4_Q5 == "already_used_12" |
+        FS_D4_Q5 == "yes" |
+        FS_D4_Q6 == "already_used_12" |
+        FS_D4_Q6 == "yes" ~ 1,
+      TRUE ~ 0)) %>%
+  mutate(
+    emergency_coping = ifelse(
+      FS_D4_Q7 == "already_used_12" |
+        FS_D4_Q7 == "yes" |
+        FS_D4_Q9 == "already_used_12" |
+        FS_D4_Q9 == "yes" |
+        FS_D4_Q10 == "already_used_12" |
+        FS_D4_Q10 == "yes",
+      1,
+      0
+    )
+  ) %>%
+  mutate(
+    stress_coping = recode(stress_coping, "0" = 0, "1" = 2),
+    crisis_coping = recode(crisis_coping, "0" = 0, "1" = 3),
+    emergency_coping = recode(emergency_coping, "0" = 0, "1" = 4),
+    Max_coping_behaviour = pmax(stress_coping, crisis_coping, emergency_coping),
+    Max_coping_behaviour = recode(Max_coping_behaviour, "0" = 1)
+  ) %>%
+  mutate(FS_D4 = Max_coping_behaviour) %>%
+  mutate(
+    Mean_coping_capacity_NoFES = rowMeans(across(c(
+      Max_coping_behaviour
+    )), na.rm = TRUE),
+    
+    CARI_unrounded_NoFES = rowMeans(across(c(
+      FCS_rCSI, Mean_coping_capacity_NoFES
+    )), na.rm = TRUE),
+    
+    CARI_NoFES = round_half_up(CARI_unrounded_NoFES)
+  ) %>%
+  mutate(IND_FS_NoFES = ifelse(CARI_NoFES > 2, 1, 0))   %>%            
+  CARI_Perc <- sum(main_merged$"IND_FS_NoFES")/nrow(main_merged)%>%
+  
+
   # health
   group_by(id_hogar)%>%
   mutate(HE_D1 = case_when(any(HE_D1_Q1 == "yes" &
