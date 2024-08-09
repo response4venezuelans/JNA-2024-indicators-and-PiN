@@ -141,7 +141,7 @@ main_merged <- main_merged %>%
   ungroup()%>% 
   
 # Nutrition
-  
+  mutate(age2_rounded = floor(age2)) %>%
   mutate(
     IND_NUT_D1 = case_when(
       (NUT_D1_Q1 == "pregnant" | NUT_D1_Q1 == "breastfeeding") &
@@ -151,30 +151,30 @@ main_merged <- main_merged %>%
       TRUE ~ 0),
     
    NUT_D4 = case_when(
-     age2<7 ~ case_when(
+     age2_rounded<= 6 ~ case_when(
       NUT_D4_Q1_nutritional_evaluation== 0 | 
       (NUT_D4_Q1_lactation_counseling == 0  | NUT_D4_Q1_non_lactation_counseling == 0) ~ 1, 
       TRUE ~ 0)),
    
     NUT_D5 = case_when(
-      age2<7 ~ case_when(NUT_D5_Q1 == "no" | NUT_D5_Q2 != "none"~ 1,
+      age2_rounded<= 6 ~ case_when(NUT_D5_Q1 == "no" | NUT_D5_Q2 != "none"~ 1,
                        TRUE ~ 0)),
     NUT_D8 = case_when(
-      age2 < 24 ~ case_when(
+      age2_rounded >= 6 & age2_rounded <24 ~ case_when(
         NUT_D8_Q1_nutritional_assessment_weight_height_arm_measurement == 0 |
           (NUT_D8_Q1_counseling_support_breastfeeding_evaluation_positions_difficulties == 0 &
              NUT_D8_Q1_counseling_support_non_breastfed_babies_formula_preparation_use_cleaning_feeding_utensils == 0)|
           NUT_D8_Q1_counseling_trained_personnel_feeding_solid_foods_diversity_preparation_feeding_children == 0 |
           NUT_D8_Q1_delivery_vitamin_mineral_supplements_iron_vitamin_a_powder_drops_syrups == 0~ 1,
         TRUE ~ 0),
-      age2 >= 24 & age2 <59 ~ case_when(
+      age2_rounded >= 24 & age2_rounded <59 ~ case_when(
         NUT_D8_Q1_nutritional_assessment_weight_height_arm_measurement == 0 |
           NUT_D8_Q1_counseling_trained_personnel_feeding_solid_foods_diversity_preparation_feeding_children == 0 |
           NUT_D8_Q1_delivery_vitamin_mineral_supplements_iron_vitamin_a_powder_drops_syrups == 0~ 1,
         TRUE ~ 0)),
    
     NUT_D10 = case_when(
-      age2 >= 6 & age2 <24 ~ case_when(
+      age2_rounded >= 6 & age2_rounded <24 ~ case_when(
         sum(
           NUT_D10_Q1_breastmilk,
           NUT_D10_Q1_grains_roots,
@@ -186,7 +186,7 @@ main_merged <- main_merged %>%
           NUT_D10_Q1_other_vegetables,
           NUT_D10_Q1_other_fruits) < 5~ 1,
         TRUE ~ 0),
-      age2 >= 24 & age2 <59 ~ case_when(
+      age2_rounded >= 24 & age2_rounded <59 ~ case_when(
         sum(
           NUT_D10_Q1_breastmilk,
           NUT_D10_Q1_grains_roots,
@@ -444,5 +444,3 @@ main_merged <- main_merged %>%
     IND_EDU_D1_max = case_when(EDU_D1 == 1 | EDU_D3 == 1 ~ 1,TRUE ~ 0
     )
   )
-
-
