@@ -444,3 +444,4 @@ main_merged <- main_merged %>%
     IND_EDU_D1_max = case_when(EDU_D1 == 1 | EDU_D3 == 1 ~ 1,TRUE ~ 0
     )
   )
+
