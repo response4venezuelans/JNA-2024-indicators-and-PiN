@@ -48,7 +48,7 @@ pins_indicator <- main_merged %>%
            age1_rounded>=0& age1_rounded<18~"Yes",
            TRUE~"No"),
          child_0_5=case_when(
-           age1_rounded>=0& age1_rounded<6~"Yes",
+           age1_rounded>=0& age1_rounded<5~"Yes",
            TRUE~"No"),
          woman_preg_lact=case_when(MH_4=="women" & age1_rounded>=14 & (NUT_D1_Q1=="breastfeeding" |NUT_D1_Q1=="pregnant")~"Yes",
                                    TRUE~"No"))
