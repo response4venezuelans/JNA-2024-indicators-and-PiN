@@ -1,5 +1,3 @@
-#Script parts on irregularity need to be adapted based on each country's reality as the documents for regularization are different in each country
-
 
 ```{r setup, fig.height=3, fig.width=7.5, include=FALSE}
 knitr::opts_chunk$set(
@@ -76,6 +74,209 @@ main <- main %>%
 
 ```
 
+
+```{r girls, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- ind %>%
+  mutate(age1_rounded = floor(age1)) %>%
+  mutate(children_5 = case_when(
+    age1_rounded <= 5 ~ 1,  # Assign 1 if age is 5 or less
+    TRUE ~ 0                # Assign 0 otherwise
+  )) %>%
+  count(children_5) %>% 
+  mutate(percent = n / sum(n) * 100)
+
+# View the frequency table
+freq_table
+
+
+```
+
+```{r boys, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- ind %>%
+  mutate(age1_rounded = floor(age1)) %>%
+  mutate(boys = case_when(
+    age1_rounded < 18 & MH_4 == "men" ~ "Yes",
+    TRUE ~ "No"
+  )) %>% 
+  count(boys) %>% 
+  mutate(percent = n / sum(n) * 100)
+
+# View the frequency table
+freq_table
+```
+
+```{r boys, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- ind %>%
+  mutate(age1_rounded = floor(age1)) %>%
+  mutate(girls = case_when(
+    age1_rounded < 18 & MH_4 == "women" ~ "Yes",
+    TRUE ~ "No"
+  )) %>% 
+  count(girls) %>% 
+  mutate(percent = n / sum(n) * 100)
+
+# View the frequency table
+freq_table
+```
+
+
+```{r women, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- ind %>%
+  mutate(age1_rounded = floor(age1)) %>%
+  mutate(women = case_when(
+    age1_rounded > 18 & MH_4 == "women" ~ "Yes",
+    TRUE ~ "No"
+  )) %>% 
+  count(women) %>% 
+  mutate(percent = n / sum(n) * 100)
+
+# View the frequency table
+freq_table
+```
+
+```{r men, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- ind %>%
+  mutate(age1_rounded = floor(age1)) %>%
+  mutate(men = case_when(
+    age1_rounded > 18 & MH_4 == "men" ~ "Yes",
+    TRUE ~ "No"
+  )) %>% 
+  count(men) %>% 
+  mutate(percent = n / sum(n) * 100)
+
+# View the frequency table
+freq_table
+```
+
+
+
+```{r children, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- ind %>%
+  mutate(age1_rounded = floor(age1)) %>%
+  mutate(children = case_when(
+    age1_rounded < 18 ~ "Yes",
+    TRUE ~ "No"
+  )) %>% 
+  count(children) %>% 
+  mutate(percent = n / sum(n) * 100)
+
+# View the frequency table
+freq_table
+```
+
+
+```{r boys_children, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- ind %>%
+  mutate(age1_rounded = floor(age1)) %>%
+  filter(age1_rounded<18) %>%
+   mutate(boys = case_when(
+   MH_4 == "men" ~ "Yes",
+    TRUE ~ "No"
+  ))%>% 
+  count(boys) %>% 
+  mutate(percent = n / sum(n) * 100)
+
+# View the frequency table
+freq_table
+```
+
+
+```{r men, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- ind %>%
+  mutate(women_pregnant = case_when(
+    MH_4 == "women" & NUT_D1_Q1 =="pregnant"|NUT_D1_Q1 =="breastfeeding" ~ "Yes",
+    TRUE ~ "No"
+  )) %>% 
+  count(women_pregnant) %>% 
+  mutate(percent = n / sum(n) * 100)
+
+# View the frequency table
+freq_table
+```
+
+```{r females, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- ind %>%
+   mutate(female= case_when(
+   MH_4 == "women" ~ "Yes",
+    TRUE ~ "No"
+  ))%>% 
+  count(female) %>% 
+  mutate(percent = n / sum(n) * 100)
+
+# View the frequency table
+freq_table
+
+```
+
+
+
+```{r females_girls, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- ind %>%
+  mutate(age1_rounded = floor(age1)) %>%
+   filter(
+   MH_4 == "women"
+  )%>% 
+mutate(girls = case_when(
+    age1_rounded < 18 ~ "Yes",
+    TRUE ~ "No"
+  )) %>% 
+  count(girls) %>% 
+  mutate(percent = n / sum(n) * 100)
+
+# View the frequency table
+freq_table
+
+```
+
+
+```{r men_boys, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- ind %>%
+  mutate(age1_rounded = floor(age1)) %>%
+   filter(
+   MH_4 == "men"
+  )%>% 
+mutate(boys = case_when(
+    age1_rounded < 18 ~ "Yes",
+    TRUE ~ "No"
+  )) %>% 
+  count(boys) %>% 
+  mutate(percent = n / sum(n) * 100)
+
+# View the frequency table
+freq_table
+
+```
+
+
+```{r girls_children, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- ind %>%
+  mutate(age1_rounded = floor(age1)) %>%
+   filter(
+    age1_rounded < 18)%>%
+mutate(girls = case_when(
+    MH_4 == "women" ~ "Yes",
+    TRUE ~ "No"
+  ))%>% 
+  count(girls) %>% 
+  mutate(percent = n / sum(n) * 100)
+
+# View the frequency table
+freq_table
+
+```
+
 #database with responses of individuals from the household = ind
 #database with responses of the head of household = main
 
@@ -136,35 +337,106 @@ ind_cp_d1 <- ind %>%
   mutate(age1_rounded = floor(age1)) %>%
   group_by(id_hogar) %>%
   mutate(
-    irregular_child = case_when(
+    irregular_child = if_else(
       any(
         age1_rounded < 18 & (
-          coalesce(MH_6_identification_document_destination, 0) != 1 &
-          coalesce(MH_6_permission_destination, 0) != 1 &
-          coalesce(MH_6_temporal_residency_destination, 0) != 1 &
-          coalesce(MH_6_temporal_protection_destination, 0) != 1 &
-          coalesce(MH_6_citizenship_destination, 0) != 1 &
-          coalesce(MH_6_asylum_seeker_documents, 0) != 1
+          coalesce(MH_6_identification_document_destination, 0) == 0 &
+          coalesce(MH_6_permission_destination, 0) == 0 &
+          coalesce(MH_6_temporal_residency_destination, 0) == 0 &
+          coalesce(MH_6_temporal_protection_destination, 0) == 0 &
+          coalesce(MH_6_citizenship_destination, 0) == 0 &
+          coalesce(MH_6_asylum_seeker_documents, 0) == 0
         )
-      ) ~ 1,  # Set to 1 if all document fields are not 1 (meaning no documents are present)
-      TRUE ~ 0  # Set to 0 if all children have at least one document
+      ),
+      1,  # Assign 1 if the condition is true
+      0   # Assign 0 if the condition is false
     )
   ) %>%
-  ungroup()%>%
+  ungroup() %>%
   select(id_hogar, irregular_child)
+
+
 # Now perform the join and subsequent operations
 main_merged_2 <- main %>%
   rename(id_hogar = "_index") %>%
   left_join(ind_cp_d1, by = "id_hogar") %>%
   group_by(id_hogar) %>%
   slice_head(n = 1) %>%  # Selects the first row of each group
-  ungroup() 
- # Calculate frequency table
-  freq_table <- main_merged_2%>%
+  ungroup()
+
+# Calculate frequency table
+freq_table <- main_merged_2 %>%
   count(IND_PRO_CP_max = case_when(
     CP_D1_Q1 != "none" | irregular_child == 1 ~ 1,
     TRUE ~ 0
   )) %>%
+  mutate(percent = n / sum(n) * 100)
+
+freq_table
+
+
+```
+
+#Child Protection  individual- Costa Rica
+```{r cp_d1_costa_rica_new, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+ind_cp_d1 <- ind %>%
+  rename(id_hogar = "_parent_index") %>%
+  mutate(age1_rounded = floor(age1)) %>%
+  filter(age1_rounded <18 & MH_3=="N-VE") %>%
+  mutate(
+    irregular_child = case_when(
+      coalesce(MH_6_identification_document_destination, 0) == 0 &
+      coalesce(MH_6_permission_destination, 0) == 0 &
+      coalesce(MH_6_temporal_residency_destination, 0) == 0 &
+      coalesce(MH_6_temporal_protection_destination, 0) == 0 &
+      coalesce(MH_6_citizenship_destination, 0) == 0 &
+      coalesce(MH_6_asylum_seeker_documents, 0) == 0 ~ 1,  # Assign 1 if the condition is true
+      TRUE ~ 0  # Assign 0 if the condition is false
+    )
+  ) %>%
+  ungroup() %>%
+  select(id_hogar, irregular_child)
+
+
+# Calculate frequency table
+freq_table <- ind_cp_d1 %>%
+  count(irregular_child) %>%
+  mutate(percent = n / sum(n) * 100)
+
+freq_table
+
+```
+
+#Child Protection  Household- Costa Rica
+```{r cp_d1_costa_rica_new, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+ind_cp_d1 <- ind %>%
+  rename(id_hogar = "_parent_index") %>%
+  mutate(age1_rounded = floor(age1)) %>%
+  group_by(id_hogar) %>%
+  summarise(
+    irregular_child = if_else(
+      any(
+        age1_rounded < 18 &
+        MH_3 == "N-VE" &
+        coalesce(MH_6_identification_document_destination, 0) != 1 &
+        coalesce(MH_6_permission_destination, 0) != 1 &
+        coalesce(MH_6_temporal_residency_destination, 0) != 1 &
+        coalesce(MH_6_temporal_protection_destination, 0) != 1 &
+        coalesce(MH_6_citizenship_destination, 0) != 1 &
+        coalesce(MH_6_asylum_seeker_documents, 0) != 1
+      ),
+      1,  # Assign 1 if the condition is true
+      0   # Assign 0 if the condition is false
+    )
+  ) %>%
+  ungroup()
+
+
+# Calculate frequency table
+freq_table <- ind_cp_d1 %>%
+  count(irregular_child) %>%
   mutate(percent = n / sum(n) * 100)
 
 freq_table
@@ -179,7 +451,7 @@ freq_table
 freq_table <- main %>%
   mutate(
     indicator = case_when(
-      CP_D1_Q1 != "none"  ~ 1,
+      CP_D1_Q2 == "no"  ~ 1,
       TRUE ~ 0
     )
   ) %>%
@@ -746,5 +1018,1149 @@ freq_table <- main %>%
 
 freq_table
 ```
+
+#Panama
+
+#In destination
+#Education - Panama
+
+```{r edu_d1_costa_rica, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- ind %>%
+  mutate(child_edu = case_when(
+    age1>= 4 & age1 < 15 ~ "Yes",
+    TRUE ~ "No"
+  )) %>%
+  count(EDU_D1_Q1=="no" & child_edu =="Yes") %>% 
+  mutate(percent = n / sum(n) * 100)
+
+# View the frequency table
+freq_table
+
+```
+
+#Education - Panama
+
+```{r edu_d2_costa_rica, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- ind %>% 
+    mutate(age1_rounded = floor(age1)) %>%
+    filter(age1_rounded <= 3) %>%
+    mutate(
+        EDU_D2_Q1_no = coalesce(EDU_D1_Q1 == "no", FALSE),
+        EDU_D2_Q2_not_in_hh_parents = coalesce(EDU_D2_Q2 != "in_hh_parents", FALSE)
+    ) %>%
+    count(EDU_D2 = EDU_D2_Q1_no & EDU_D2_Q2_not_in_hh_parents) %>%
+    mutate(percent = n / sum(n) * 100)
+
+freq_table
+
+```
+
+#Education - Panama
+```{r edu_d3_costa_rica, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- ind %>% 
+      mutate(age1_rounded = floor(age1)) %>%
+    filter(age1_rounded >= 5 & age1_rounded < 18) %>%
+  count(EDU_D1_Q1=="yes" & EDU_D3_Q1 < 5)%>%
+  mutate(percent = n / sum(n) * 100)
+
+freq_table
+
+```
+
+#Child Protection old - Costa Rica
+
+```{r cp_d1_old_panama, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- main %>%
+  mutate(
+    indicator = case_when(
+      CP_D1_Q1 != "none"  ~ 1,
+      TRUE ~ 0
+    )
+  ) %>%
+  count(indicator) %>%
+  mutate(percent = n / sum(n) * 100)
+
+freq_table
+
+```
+
+#Child Protection - Panama
+```{r cp_d1_panama_new, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+ind_cp_d1<- ind %>%
+  rename(id_hogar = "_parent_index")%>%
+  mutate(age1_rounded = floor(age1)) %>%
+  group_by(id_hogar) %>%
+  mutate(
+    irregular_child = if_else(
+      any(
+        age1_rounded < 18 & (
+          MH_6_visa != 1 &
+          MH_6_domestic_worker_visa != 1 &
+          MH_6_temporal_residency_destination != 1 &
+          MH_6_permanent_residency_destination != 1 &
+          MH_6_humanitarian_permit_destination != 1 &
+          MH_6_other_humanitarian_permit_destination != 1 &
+          MH_6_asylum_seeker_documents != 1
+        ),
+        na.rm = TRUE  # Ensure NAs are ignored when evaluating conditions
+      ),
+      1, # Set to 1 if any child lacks the required documents
+      0  # Set to 0 if all children have the required documents
+    )
+  ) %>%
+  ungroup() %>%
+  select(id_hogar, irregular_child)
+# Now perform the join and subsequent operations
+main_merged_2 <- main %>%
+  rename(id_hogar = "_index") %>%
+  left_join(ind_cp_d1, by = "id_hogar") %>%
+  group_by(id_hogar) %>%
+  slice_head(n = 1) %>%  # Selects the first row of each group
+  ungroup() 
+ # Calculate frequency table
+  freq_table <- main_merged_2%>%
+  count(IND_PRO_CP_max = case_when(
+    CP_D1_Q1 != "none" | irregular_child == 1 ~ 1,
+    TRUE ~ 0
+  )) %>%
+  mutate(percent = n / sum(n) * 100)
+
+freq_table
+
+```
+
+#Child Protection Individual - Panama
+
+```{r cp_d1_panama_new, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+ind_cp_d1 <- ind %>%
+  rename(id_hogar = "_parent_index") %>%
+  mutate(age1_rounded = floor(age1)) %>%
+  filter(age1_rounded < 18) %>%
+  mutate(
+    irregular_child = case_when(
+      (MH_3 == "N-PA" | 
+       coalesce(MH_6_visa, 0) == 1 |
+       coalesce(MH_6_domestic_worker_visa, 0) == 1 |
+       coalesce(MH_6_temporal_residency_destination, 0) == 1 |
+       coalesce(MH_6_permanent_residency_destination, 0) == 1 |
+       coalesce(MH_6_humanitarian_permit_destination, 0) == 1 |
+       coalesce(MH_6_other_humanitarian_permit_destination, 0) == 1) ~ 0,  # Set to 0 if any condition is true
+      TRUE ~ 1  # Set to 1 if none of the conditions are true
+    )
+  ) %>%
+  ungroup() %>%
+  select(id_hogar, irregular_child)
+
+# Calculate frequency table
+freq_table <- ind_cp_d1 %>%
+  count(irregular_child) %>%
+  mutate(percent = n / sum(n) * 100)
+
+freq_table
+
+```
+
+#Child Protection - Panama
+
+```{r ct_d1_panama_new, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- main_merged %>%
+  mutate(age1_rounded = floor(age1)) %>%
+  group_by(id_hogar) %>%
+  mutate(
+    any_MH_6_no_valid_document_child = if_else(
+      any(
+        age1_rounded < 18 & (
+          MH_6_visa == 0 |
+          MH_6_domestic_worker_visa == 0 |
+          MH_6_temporal_residency_destination == 0 |
+          MH_6_permanent_residency_destination == 0 |
+          MH_6_humanitarian_permit_destination == 0 |
+          MH_6_other_humanitarian_permit_destination == 0 |
+          MH_6_asylum_seeker_documents == 0
+        ), na.rm = TRUE
+      ),
+      1, # Set to 1 if any condition is true
+      0  # Set to 0 if none of the conditions are true
+    )
+  ) %>%
+  ungroup() %>%
+  count(IND_PRO_CP_max = case_when(
+    CP_D1_Q1 != "none" | any_MH_6_no_valid_document_child == 1 ~ 1,
+    TRUE ~ 0
+  )) %>%
+  mutate(percent = n / sum(n) * 100)
+
+freq_table
+
+
+```
+
+
+
+#Health - Panama
+
+```{r he_d1_panama, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- main_merged %>% 
+  count(HE_D1_Q1 == "yes" &HE_D1_Q2 == "no")%>%
+  mutate(percent = n / sum(n) * 100)
+
+freq_table
+
+
+```
+
+#Health - Panama
+
+```{r he_d2_panama, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- main_merged %>% 
+   filter(age1>=15 & INT_D1_Q1=="work")%>% 
+  count(INT_D2_Q2 == "yes")%>%
+  mutate(percent = n / sum(n) * 100)
+
+freq_table
+
+```
+
+
+#Human Trafficking and Smuggling - Panama
+
+```{r hts_d1_panama, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- main %>%
+  count(HTS_D1_Q1 == "yes" | HTS_D1_Q2 == "yes")%>%
+  mutate(percent = n / sum(n) * 100)
+
+freq_table
+```
+
+#Human Trafficking and Smuggling - Panama
+
+```{r hts_d2_panama, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- main %>%
+  count(HTS_D2_Q1 != "none" & HTS_D2_Q1 != "not_applicable" )%>%
+  mutate(percent = n / sum(n) * 100)
+
+freq_table
+```
+
+#Human Trafficking and Smuggling - Panama
+
+```{r hts_d2_panama, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- main_merged %>%
+  group_by(id_hogar) %>%
+  mutate(
+    any_MH_6_no_valid_document = if_else(
+      any(
+        MH_6_visa == 0 |
+          MH_6_domestic_worker_visa == 0 |
+          MH_6_temporal_residency_destination == 0 |
+          MH_6_permanent_residency_destination == 0 |
+          MH_6_humanitarian_permit_destination == 0 |
+          MH_6_other_humanitarian_permit_destination == 0|
+          MH_6_asylum_seeker_documents == 0,
+        na.rm = TRUE
+      ),
+      1, # Set to 1 if any condition is true
+      0  # Set to 0 if none of the conditions are true
+    ),
+    HTS_D2_Q1_valid = HTS_D2_Q1 != "none" & HTS_D2_Q1 != "not_applicable" & any_MH_6_no_valid_document == 1
+  ) %>%
+  ungroup() %>%
+  count(HTS_D2_Q1_valid) %>%
+  mutate(percent = n / sum(n) * 100)
+
+freq_table
+
+```
+
+#Human Trafficking and Smuggling - Panama
+
+```{r hts_d2_informality_costa_rica, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- main_merged %>%
+  group_by(id_hogar) %>%
+  mutate(
+    any_member_informality = if_else(
+      any(
+        age1 >= 15 & (INT_D1_Q1 == "finding_work" | INT_D1_Q1 == "work") &
+        (INT_D2_Q1 == "no" | INT_D2_Q2 == "no" | INT_D2_Q3 == "no"),
+        na.rm = TRUE
+      ),
+      1, # Set to 1 if any condition is true
+      0  # Set to 0 if none of the conditions are true
+    ),
+    HTS_D2_Q1_valid = HTS_D2_Q1 != "none" & HTS_D2_Q1 != "not_applicable" & any_member_informality == 1
+  ) %>%
+  ungroup() %>%
+  count(HTS_D2_Q1_valid) %>%
+  mutate(percent = n / sum(n) * 100)
+
+freq_table
+
+```
+
+#Humanitarian Transportation - Panama
+
+```{r ht_d1_costa_rica_old, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- main %>% 
+  count((HT_D1_Q1_walking == 1 |
+           HT_D1_Q1_bike == 1) & HT_D1_Q2 == "30m-plus")%>%
+  mutate(percent = n / sum(n) * 100)
+
+freq_table
+```
+
+#Humanitarian Transportation - Panama
+
+```{r ht_d1_costa_rica_new, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- main %>% 
+  count((HT_D1_Q1_walking == 1 |
+           HT_D1_Q1_bike == 1|
+           HT_D1_Q1_informal_particular_transport == 1|
+           HT_D1_Q1_govt_ngo_transport == 1|
+           HT_D1_Q1_autostop == 1) & HT_D1_Q2 == "30m-plus")%>%
+  mutate(percent = n / sum(n) * 100)
+
+freq_table
+```
+
+#Integration -Panama
+
+```{r ind_d1_costa_rica, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- main_merged %>% 
+  filter(age1>=15 & (INT_D1_Q1 =="finding_work"|INT_D1_Q1=="work")) %>% 
+  count(INT_D1_Q1 == "finding_work" )%>% 
+  mutate(percent = n / sum(n) * 100)
+
+freq_table
+```
+
+#Discrimination  by Nationality - Panama
+
+```{r ind_d2_costa_rica, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- main_merged %>% 
+  count(INT_D3_Q1_nationality == 1 )%>%
+  mutate(percent = n / sum(n) * 100)
+
+freq_table
+```
+
+#Informal work - Panama
+
+```{r ind_d3_costa_rica, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- ind %>% 
+  mutate(INT_D2_Q3=INT_D2_Q2)%>% 
+    mutate(age1_rounded = floor(age1)) %>%
+  filter(age1_rounded>=15 & INT_D1_Q1 == "work") %>% 
+  count(INT_D2_Q1 == "no"|INT_D2_Q2 == "no" | INT_D2_Q3 == "no")%>% 
+  mutate(percent = n / sum(n) * 100)
+
+freq_table
+```
+
+# Discriminated by Nationality in Workplace - Panama
+
+```{r ind_d3_costa_rica, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+library(dplyr)
+library(tidyr)
+
+freq_table <- main_merged %>% 
+  mutate(
+    condition = replace_na(
+      (INT_D3_Q1 == "age" |
+       INT_D3_Q1 == "sex" |  
+       INT_D3_Q1 == "sexual_orientation" |
+       INT_D3_Q1 == "gender_identity" |
+       INT_D3_Q1 == "ethnics" |
+       INT_D3_Q1 == "disability" |  
+       INT_D3_Q1 == "nationality" |
+       INT_D3_Q1 == "other") & INT_D3_Q2 == "work",
+      FALSE
+    )
+  ) %>% 
+  count(condition) %>%
+  mutate(percent = n / sum(n) * 100)
+
+freq_table
+
+```
+
+#Integration - Panama
+
+```{r ind_d4_costa_rica, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- main %>% 
+  count(INT_D4_Q1 =="none")%>%
+  mutate(percent = n / sum(n) * 100)
+
+freq_table
+```
+
+#Nutrition - Panama
+
+```{r nut_d1_costa_rica, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- ind %>% 
+      mutate(age1_rounded = floor(age1)) %>%
+  filter(MH_4=="women" & age1_rounded>14 & (NUT_D1_Q1 == "pregnant" | NUT_D1_Q1 == "breastfeeding"))%>%
+  count(NUT_D1_Q2_nutritional_evaluation == 0 |
+           NUT_D1_Q2_nutritional_counceling == 0 |
+           NUT_D1_Q2_micronutrient_delivery == 0)%>%
+  mutate(percent = n / sum(n) * 100)
+
+freq_table
+```
+
+#Nutrition - Panama
+
+```{r nut_d10_costa_rica, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- ind %>% 
+      mutate(age2_rounded = floor(age2)) %>%
+ filter(age2_rounded >= 24 & age2_rounded < 59) %>%
+  mutate(total = rowSums(select(., NUT_D10_Q1_breastmilk,
+                                     NUT_D10_Q1_grains_roots,
+                                     NUT_D10_Q1_legumes,
+                                     NUT_D10_Q1_lacteo_products,
+                                     NUT_D10_Q1_animal_protein,
+                                     NUT_D10_Q1_eggs,
+                                     NUT_D10_Q1_dark_leaf_vegetables,
+                                     NUT_D10_Q1_other_vegetables,
+                                     NUT_D10_Q1_other_fruits))) %>%
+  count(total < 5)%>%
+  mutate(percent = n / sum(n) * 100)
+freq_table
+```
+
+#Nutrition - Panama
+
+```{r nut_d4_panama, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- ind %>% 
+        mutate(age2_rounded = floor(age2)) %>%
+  filter(age2_rounded <6)%>%
+ count(NUT_D4_Q1_nutritional_evaluation == 0 |
+        (NUT_D4_Q1_lactation_counseling == 0 | NUT_D4_Q1_non_lactation_counseling == 0))%>%
+  mutate(percent = n / sum(n) * 100)
+freq_table
+```
+
+#Nutrition - Panama
+
+```{r nut_d5_panama, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- ind %>% 
+  mutate(age2_rounded = floor(age2)) %>%
+  filter(age2_rounded <6)%>%
+ count(NUT_D5_Q1 == "no")%>%
+  mutate(percent = n / sum(n) * 100)
+freq_table
+```
+
+#Nutrition - Panama
+
+```{r nut_d8_panama, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- ind %>% 
+    mutate(age2_rounded = floor(age2)) %>%
+ filter(age2_rounded >= 24 & age2_rounded < 59) %>%
+  mutate(condition = NUT_D8_Q1_nutritional_assessment_weight_height_arm_measurement == 0 |
+                    (NUT_D8_Q1_counseling_support_breastfeeding_evaluation_positions_difficulties == 0 &
+                     NUT_D8_Q1_counseling_support_non_breastfed_babies_formula_preparation_use_cleaning_feeding_utensils == 0) |
+                    NUT_D8_Q1_counseling_trained_personnel_feeding_solid_foods_diversity_preparation_feeding_children == 0 |
+                    NUT_D8_Q1_delivery_vitamin_mineral_supplements_iron_vitamin_a_powder_drops_syrups == 0) %>%
+  count(condition)%>%
+  mutate(percent = n / sum(n) * 100)
+          
+freq_table
+```
+
+#GBV -  Panama
+
+```{r gbv_d1_panama, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- main %>% 
+ count(GBV_D1_Q1 == "yes")%>%
+  mutate(percent = n / sum(n) * 100)
+          
+freq_table
+```
+
+# GBV - Panama
+```{r gbv_d3_panama, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- main %>%
+  count(condition = GBV_D3_Q1 %in% c(4, 5)) %>%
+  mutate(percent = n / sum(n) * 100)
+
+freq_table
+```
+
+#Protection - Panama
+
+```{r pro_d1_panama, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- main %>%
+  mutate(condition = case_when(
+    PROT_D1_Q1 != "none" ~ TRUE,
+    TRUE ~ FALSE  # Set all other cases to FALSE
+  )) %>%
+  count(condition) %>%
+  mutate(percent = n / sum(n) * 100)
+
+freq_table
+```
+
+#Protection - Panama
+
+```{r pro_d2_panama, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- main %>% 
+ count(PROT_D2_Q1 != "none")%>%
+  mutate(percent = n / sum(n) * 100)
+          
+freq_table
+```
+
+
+#Protection - Panama
+
+```{r pro_d3_panama, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- main %>% 
+ count(PROT_D3_Q1 == "yes" & PROT_D3_Q3 == "no")%>%
+  mutate(percent = n / sum(n) * 100)
+          
+freq_table
+```
+
+#Protection - Panama
+
+```{r pro_d4_panama, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- main_merged %>% 
+  filter(MH_3=="N-VE")%>%
+  count(MH_6_identification_document_destination == 1|
+         MH_6_permission_destination == 1|
+         MH_6_temporal_residency_destination == 1|
+         MH_6_temporal_protection_destination == 1|
+         MH_6_citizenship_destination == 1|
+          MH_6_asylum_seeker_documents ==1)%>%
+  mutate(percent = n / sum(n) * 100)
+          
+freq_table
+```
+
+# Protection - Panama
+
+```{r pro_d5_panama, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- main %>% 
+  mutate(condition = case_when(
+    (PROT_D5_Q1 == "yes" | PROT_D5_Q1 == "prefer_not_answer") &
+    (PROT_D5_Q2_extortion == 1 |
+     PROT_D5_Q2_general_violence == 1 |
+     PROT_D5_Q2_afraid_armed_group == 1 |
+     PROT_D5_Q2_health_risk == 1 |
+     PROT_D5_Q2_insecurity == 1 |
+     PROT_D5_Q2_persecuted_assaulted_discrim == 1) ~ TRUE,
+    TRUE ~ FALSE  # Set all other cases to FALSE
+  )) %>%
+  count(condition) %>%
+  mutate(percent = n / sum(n) * 100)
+
+freq_table
+```
+
+#Shelter - Panama
+
+```{r she_d1_panama, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- main %>% 
+  mutate(SHE_D1 = case_when(
+      SHE_D1_Q1 == "street" |
+      SHE_D1_Q1 == "shared_house" |
+      SHE_D1_Q1 == "foster_family" |
+      SHE_D1_Q1 == "rooming_house" |
+      SHE_D1_Q1 == "hotel" |
+      SHE_D1_Q1 == "shelters" |
+      SHE_D1_Q1 == "colective" |
+      SHE_D1_Q1 == "spontaneous" |
+      SHE_D1_Q1 == "prefer_not_answer" |
+      SHE_D1_Q2_house_unprotected_insecure == 1 |
+      SHE_D1_Q2_neighboor_unprotected_insecure == 1 |
+      SHE_D1_Q2_privacy == 1 |
+      SHE_D1_Q2_natural_disasters == 1 |
+      SHE_D1_Q2_wash_issues == 1 |
+      SHE_D1_Q3_sewerage == 1 |
+      SHE_D1_Q3_garbage_collection == 1 |
+      SHE_D1_Q3_electricity == 1 |
+      SHE_D1_Q3_acueduct == 1 ~ TRUE,
+      TRUE ~ FALSE
+    )) %>%
+  count(SHE_D1)%>%
+  mutate(percent = n / sum(n) * 100)
+          
+freq_table
+```
+
+#Shelter - Panama
+
+```{r she_d2_panama, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- main %>%
+ filter(SHE_D1_Q1 != "street") %>%
+  mutate(condition = (MH_1 / SHE_D2_Q1 > 3)) %>%
+  count(condition) %>%
+  mutate(percent = n / sum(n) * 100)
+
+freq_table
+```
+
+#Shelter - Panama
+
+```{r she_d3_panama, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- main %>%
+  filter(SHE_D1_Q1 != "street") %>%
+  mutate(condition = case_when(
+    SHE_D3_Q1_none == 0 ~ TRUE,
+    TRUE ~ FALSE  # Set all other cases to FALSE
+  )) %>%
+  count(condition) %>%
+  mutate(percent = n / sum(n) * 100)
+
+freq_table
+```
+
+#Shelter - Panama
+
+```{r she_d4_panama, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- main %>%
+  filter(SHE_D1_Q1 != "street") %>%
+  mutate(condition = SHE_D4_Q1 %in% c("some_eviction_risk", "evicted", "prefer_not_answer")) %>%
+  count(condition) %>%
+  mutate(percent = n / sum(n) * 100)
+
+freq_table
+```
+
+#WASH - Panama
+
+```{r wa_d1_panama, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- main %>%
+  mutate(condition = (WASH_D1_Q1 %in% c("rain_water", "bottled_water", "water_supply", "water_kiosk", "unprotected_well_spring", "no_pump_well", "surface_water", "none") &
+                      WASH_D1_Q2 == "30min_high")) %>%
+  count(condition) %>%
+  mutate(percent = n / sum(n) * 100)
+
+freq_table
+```
+
+#WASH - Panama
+
+```{r wa_d2_panama, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- main %>%
+  mutate(condition = (WASH_D2_Q1 == "not_enough_water" |
+                      !(WASH_D2_Q1 %in% c("drink", "cook", "hygiene", "other"))) &
+                     (WASH_D2_Q2 %in% c("less_3days_week", "3days_week", "more3days_week", "restricted_schedule", "dont_know", "prefer_not_answer"))) %>%
+  count(condition) %>%
+  mutate(percent = n / sum(n) * 100)
+
+freq_table
+```
+
+# WASH - Panama
+
+```{r wa_d4_panama fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- main %>%
+  mutate(condition = case_when(
+    WASH_D4_Q1 %in% c("improvised_latrine", "hanging_latrine", "no_sanitation_service_free_access", "no_sanitation_service_pay_access", "open_defecation") |
+    WASH_D4_Q2 == "yes" ~ TRUE,
+    TRUE ~ FALSE  # Set all other cases to FALSE
+  )) %>%
+  count(condition) %>%
+  mutate(percent = n / sum(n) * 100)
+
+freq_table
+```
+
+# WASH - Panama
+
+```{r wa_d6_panama fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- main %>%
+  mutate(condition = case_when(
+    WASH_D6_Q1 %in% c("river_stream", "patio_lot", "burnt", "dont_know") ~ TRUE,
+    TRUE ~ FALSE  # Set all other cases to FALSE
+  )) %>%
+  count(condition) %>%
+  mutate(percent = n / sum(n) * 100)
+
+freq_table
+```
+
+#WASH - Panama
+
+```{r wa_d8_panama fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- main %>%
+  mutate(condition = case_when(
+    WASH_D8_Q1 %in% c("water", "soap", "cant_handwash", "antibacterial_gel") ~ TRUE,
+    TRUE ~ FALSE  # Set all other cases to FALSE
+  )) %>%
+  count(condition) %>%
+  mutate(percent = n / sum(n) * 100)
+
+freq_table
+```
+
+#WASH - Panama
+
+```{r wa_d11_panama fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- main %>%
+  mutate(condition = case_when(
+    WASH_D11_Q1 %in% c("no", "panty_liners", "cloth_fabric", 
+                       "toilet_paper", "underwear_layers", 
+                       "not_applicable", "other") ~ TRUE,
+    TRUE ~ FALSE  # Set all other cases to FALSE
+  )) %>%
+  count(condition) %>%
+  mutate(percent = n / sum(n) * 100)
+
+freq_table
+```
+
+
+
+#Costa Rica in transit - based on Mixed Movement Monitoring Data
+
+#Education
+
+```{r edu_t1, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- main_mmm %>% 
+    filter(R4V_transit_pop=="Other nationality")%>%
+  count(EDU_T_Q1=="none") %>%
+  mutate(percent = n / sum(n) * 100)
+
+freq_table
+
+```
+
+
+#Child Protection
+
+```{r cp_t1, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- main_mmm %>% 
+   filter(R4V_transit_pop=="Other nationality")%>%
+     count(B12_children_separated == "yes")%>%
+  mutate(percent = n / sum(n) * 100)
+
+freq_table
+
+```
+
+#Child Protection
+
+```{r cp_t1_2, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- main_mmm %>% 
+  rename(F08_Mainneeds_6months_17years_psych='F08_Mainneeds_6months-17years_psych')%>% 
+  rename(F08_Mainneeds_6months_17years_safe_spaces='F08_Mainneeds_6months-17years_safe_spaces')%>% 
+   filter(R4V_transit_pop=="Other nationality")%>%
+     count(F08_Mainneeds_6months_17years_psych == 1 |
+          F08_Mainneeds_6months_17years_safe_spaces==1)%>%
+  mutate(percent = n / sum(n) * 100)
+
+freq_table
+
+```
+
+#Food Security
+
+```{r fs_t1_1, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- main_mmm %>% 
+    filter(R4V_transit_pop=="Other nationality")%>%
+  count( F03_Nmeals == "none"| F03_Nmeals == "one" )%>%
+  mutate(percent = n / sum(n) * 100)
+
+freq_table
+
+```
+
+#Food Security
+
+```{r fs_t1_2, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- main_mmm %>% 
+    filter(R4V_transit_pop=="Other nationality")%>%
+  count(F04_Food_Sec != "no_difficulties")%>%
+  mutate(percent = n / sum(n) * 100)
+
+freq_table
+
+```
+
+#Health
+
+```{r he_t, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- main_mmm %>% 
+  filter(R4V_transit_pop == "Venezuela") %>%
+  mutate(condition = HE_T_Q1 == "yes") %>%
+  count(condition) %>%
+  mutate(percent = n / sum(n) * 100)
+
+freq_table
+
+
+```
+
+#Human Trafficking and Smuggling
+
+```{r hts_t1, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- main_mmm %>% 
+    filter(R4V_transit_pop=="Venezuela")%>%
+  count(E02_incidents_abductionORkidnapping == 1 | 
+    E02_incidents_arrestORdetention == 1 |
+    E02_incidents_fraud == 1)%>%
+  mutate(percent = n / sum(n) * 100)
+
+freq_table
+```
+
+# Human Trafficking and Smuggling
+
+```{r hts_t2, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- main_mmm %>% 
+    filter(R4V_transit_pop=="Venezuela")%>%
+  count(E02_incidents_Exploitationwork == 1)%>%
+  mutate(percent = n / sum(n) * 100)
+
+freq_table
+```
+
+# Human Trafficking and Smuggling
+
+```{r hts_t3, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- main_mmm %>% 
+    filter(R4V_transit_pop=="Venezuela")%>%
+  count(E02_incidents_threat == 1 |
+    E02_incidents_physicalAssault == 1 |
+    E02_incidents_abductionORkidnapping == 1 |
+    E02_incidents_extorsion == 1)%>%
+  mutate(percent = n / sum(n) * 100)
+
+freq_table
+```
+
+
+#Integration
+
+```{r ind_t, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- main_mmm %>% 
+    filter(R4V_transit_pop=="Other nationality")%>%
+  count(INT_T_Q1 == "none" | INT_T_Q1 == "charity" | INT_T_Q1 == "humanitarian_assistance")%>%
+  mutate(percent = n / sum(n) * 100)
+
+freq_table
+```
+
+#Nutrition
+
+```{r nut_t1, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- main_mmm %>%
+  filter(R4V_transit_pop == "Other nationality") %>%
+  count(B13_pregnant == "yes" | (B14_lactating == "yes" & H02_breastfed_problems == "yes")) %>%
+  mutate(percent = n / sum(n) * 100)
+
+freq_table
+```
+
+# Nutrition
+
+```{r nut_t2, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- main_mmm %>%
+  filter(R4V_transit_pop == "Other nationality") %>%
+  mutate(
+    NUT_T10_24_59 = ifelse(
+      (I01_foodpoverty_leche_materna +
+       I01_foodpoverty_granos_raices +
+       I01_foodpoverty_legumbres_frijoles +
+       I01_foodpoverty_lacteos +
+       I01_foodpoverty_carnes_pescado +
+       I01_foodpoverty_huevo +
+       I01_foodpoverty_verduras +
+       I01_foodpoverty_otras_verduras) < 5, TRUE, FALSE
+    ),
+    NUT_T10_6_23 = ifelse(
+      (II01_foodpoverty_leche_materna +
+       II01_foodpoverty_granos_raices +
+       II01_foodpoverty_legumbres_frijoles +
+       II01_foodpoverty_lacteos +
+       II01_foodpoverty_carnes_pescado +
+       II01_foodpoverty_huevo +
+       II01_foodpoverty_verduras +
+       II01_foodpoverty_otras_verduras) < 5, TRUE, FALSE
+    )
+  ) %>%
+  count(NUT_T10_24_59, NUT_T10_6_23) %>%
+  mutate(percent = n / sum(n) * 100)
+
+freq_table
+```
+
+#Nutrition
+```{r nut_t3, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- main_mmm %>% 
+  filter(R4V_transit_pop == "Other nationality") %>%
+  mutate(NUT_T4=H03_humanitarian_services_weight_check == 0 |
+    H03_humanitarian_services_nutrition_counseling == 0 |
+    H03_humanitarian_services_health_counseling == 0 |
+    H03_humanitarian_services_breastfeed_counseling == 0 |
+    H03_humanitarian_services_none == 1) %>%
+  count(NUT_T4) %>%
+  mutate(percent = n / sum(n) * 100)
+
+freq_table
+```
+
+#Nutrition
+
+```{r nut_t4, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- main_mmm %>% 
+    filter(R4V_transit_pop=="Other nationality")%>%
+  count( H01_breastfed == "yes" & 
+      H02_breastfed_exclusively == "none_excl")%>%
+  mutate(percent = n / sum(n) * 100)
+
+freq_table
+```
+
+#Nutrition
+
+```{r nut_t1, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- main_mmm %>%
+  filter(R4V_transit_pop == "Other nationality") %>%
+  mutate(
+    NUT_T8_6_23 = 
+      II03_humanitarian_services_parent_counseling == 0 &
+      II03_humanitarian_services_supplement == 0 &
+      II03_humanitarian_services_weight_check == 0 &
+      II03_humanitarian_services_nutrition_counseling == 0,
+    NUT_T8_24_59 = 
+      I03_humanitarian_services_weight_check3 == 0 &
+      I03_humanitarian_services_nutrition_counseling3 == 0 &
+      I03_humanitarian_services_supplement3 == 0
+  ) %>%
+  count(NUT_T8_6_23, NUT_T8_24_59) %>%
+  mutate(percent = n / sum(n) * 100)
+
+freq_table
+```
+
+#Nutrition
+
+```{r nut_t8, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+
+freq_table <- ind %>% 
+ filter(age2 >= 24 & age2 < 59) %>%
+  mutate(condition = NUT_D8_Q1_nutritional_assessment_weight_height_arm_measurement == 0 |
+                    (NUT_D8_Q1_counseling_support_breastfeeding_evaluation_positions_difficulties == 0 &
+                     NUT_D8_Q1_counseling_support_non_breastfed_babies_formula_preparation_use_cleaning_feeding_utensils == 0) |
+                    NUT_D8_Q1_counseling_trained_personnel_feeding_solid_foods_diversity_preparation_feeding_children == 0 |
+                    NUT_D8_Q1_delivery_vitamin_mineral_supplements_iron_vitamin_a_powder_drops_syrups == 0) %>%
+  count(condition)%>%
+  mutate(percent = n / sum(n) * 100)
+          
+freq_table
+```
+
+
+#GBV
+
+```{r gbv_d1, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <-main_mmm %>% 
+    filter(R4V_transit_pop=="Venezuela")%>%
+ count(G01_Spec_needs_woman_at_risk == 1 |
+    G01_Spec_needs_victimsurvivor == 1)%>%
+  mutate(percent = n / sum(n) * 100)
+          
+freq_table
+```
+
+
+#Protection
+
+```{r pro_t1, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <-main_mmm %>% 
+    filter(R4V_transit_pop=="Venezuela")%>%
+ count(E02_incidents != "none" &C03_habitual_residence=="no")%>%
+  mutate(percent = n / sum(n) * 100)
+          
+freq_table
+```
+
+#Protection
+
+```{r pro_t2, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- main_mmm %>%
+  filter(R4V_transit_pop == "Venezuela") %>%
+  mutate(
+    needs_met = F06_Mainneeds_information == 1 |
+                 F06_Mainneeds_legal == 1
+  ) %>%
+  count(needs_met) %>%
+  mutate(percent = n / sum(n) * 100)
+
+# View the frequency table
+freq_table
+
+```
+
+#Protection
+
+```{r pro_t3, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- main_mmm %>%
+  filter(R4V_transit_pop == "Venezuela") %>%
+  mutate(
+    # Handle NA values by treating them as 0
+    E07_risk_return = coalesce(E07_risk_return, "no"),  
+    reason_met = E07_risk_return == "yes")%>%
+  count(reason_met) %>%
+  mutate(percent = n / sum(n) * 100)
+
+# View the frequency table
+freq_table
+
+```
+
+
+#Shelter
+
+```{r she_t1, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- main_mmm %>%
+  filter(R4V_transit_pop == "Venezuela") %>%
+  count(SHE_T_Q1 %in% c("street_squat", "daily_payment", "shelter_temporary", 
+                        "colective_center", "informal_setting", "transport", 
+                        "dont_know", "prefer_not_answer")) %>%
+  mutate(percent = n / sum(n) * 100)
+
+freq_table
+
+
+
+```
+
+#Shelter
+
+```{r she_t2, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+
+freq_table <- main_mmm %>% 
+  filter(R4V_transit_pop == "Venezuela") %>%
+  count(SHE_T_Q2 != "none") %>%
+  mutate(percent = n / sum(n) * 100)
+
+freq_table
+
+```
+
+
+#WASH
+
+```{r wa_t1, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+freq_table <- main_mmm %>% 
+  filter(R4V_transit_pop == "Other nationality") %>%
+  count(WASH_T_Q1 != "yes") %>%
+  mutate(percent = n / sum(n) * 100)
+
+freq_table
+```
+
+#WASH
+
+```{r wa_t2, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+
+freq_table <- main_mmm %>% 
+  filter(R4V_transit_pop == "Venezuela") %>%
+  count(WASH_T_Q3 != "establishment_unpaid" & WASH_T_Q3 != "shelter") %>%
+  mutate(percent = n / sum(n) * 100)
+
+freq_table
+
+```
+
+#WASH
+
+```{r wa_t3, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+
+freq_table <- main_mmm %>% 
+  filter(R4V_transit_pop == "Other nationality") %>%
+  count(WASH_T_Q4 != "shelter") %>%
+  mutate(percent = n / sum(n) * 100)
+
+freq_table
+
+```
+
+#WASH 
+
+```{r wa_t4, fig.height=4, fig.width=7, message=FALSE, warning=FALSE, dev='svg', out.width='1000px'}
+
+
+freq_table <- main_mmm %>% 
+  filter(R4V_transit_pop == "Venezuela") %>%
+  count(WASH_T_Q5 %in% c("no", "pads", "cloth", "toilet_paper", "not_applicable", "other")) %>%
+  mutate(percent = n / sum(n) * 100)
+
+freq_table
+
+```
+
+
 
 
