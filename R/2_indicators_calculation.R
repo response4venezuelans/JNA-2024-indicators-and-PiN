@@ -34,11 +34,12 @@ main_merged <- main_merged %>%
                         R_CSI > 4, 2, FCS_rCSI)
   ) %>%
   mutate(FS_D2 = FCS_rCSI)%>%
+  #https://databankfiles.worldbank.org/public/ddpext_download/poverty/33EF03BB-9722-4AE2-ABC7-AA2972D68AFE/Archives-2017/Global_POV_SP_CPB_CRI.pdf#:~:text=In%20June%202016%2C%20extreme%20poverty%20lines%20were%20%C2%A248%2C399,%C2%A281%2C685%20%28%24205%20in%20PPP%202011%29%20in%20both%20areas.
   mutate(spending_pc = (FS_D3_Q1 + FS_D3_Q2) /MH_1) %>%
   mutate(Foodexp_4pt = case_when(
-    spending_pc >= 109.5 ~ 1,
-    spending_pc >= 64.5 & spending_pc < 109.5 ~ 3,
-    spending_pc < 64.5 ~ 4
+    spending_pc >= 82000 ~ 1,
+    spending_pc >= 40000 & spending_pc < 82000 ~ 3,
+    spending_pc < 40000 ~ 4
   )) %>%
   mutate(FS_D3 = Foodexp_4pt) %>%
   mutate(
@@ -94,7 +95,7 @@ main_merged <- main_merged %>%
   ) %>%
   mutate(IND_FS_max = ifelse(CARI_FES > 2, 1, 0))%>%
   
-  #ARI_Perc <- sum(main_merged$"IND_FS_max")/nrow(main_merged)
+ #ARI_Perc <- sum(main_merged$"IND_FS_max")/nrow(main_merged)
 
 
 #Health
@@ -236,19 +237,21 @@ main_merged <- main_merged %>%
   
   group_by(id_hogar) %>%
   mutate(age1_rounded = floor(age1)) %>%
+  group_by(id_hogar) %>%
   mutate(
-    irregular_child = if_else(
-      age1_rounded < 18 &
-        (
-          coalesce(MH_6_identification_document_destination, 0) != 1 &
-            coalesce(MH_6_permission_destination, 0) != 1 &
-            coalesce(MH_6_temporal_residency_destination, 0) != 1 &
-            coalesce(MH_6_temporal_protection_destination, 0) != 1 &
-            coalesce(MH_6_citizenship_destination, 0) != 1 &
-            coalesce(MH_6_asylum_seeker_documents, 0) != 1
-        ),
-      1,  # Set to 1 if all document fields are not 1 (meaning no documents are present)
-      0   # Set to 0 if at least one document field is 1 (meaning at least one document is present)
+    irregular_child = case_when(
+      any(
+        age1_rounded < 18 &
+          MH_3 == "N-VE" & (
+          coalesce(MH_6_identification_document_destination, 0) ==0 &
+            coalesce(MH_6_permission_destination, 0) ==0  &
+            coalesce(MH_6_temporal_residency_destination, 0) ==0  &
+            coalesce(MH_6_temporal_protection_destination, 0) ==0  &
+            coalesce(MH_6_citizenship_destination, 0) ==0  &
+            coalesce(MH_6_asylum_seeker_documents, 0) ==0 
+        )
+      ) ~ 1,  # Set to 1 if all document fields are not 1 (meaning no documents are present)
+      TRUE ~ 0  # Set to 0 if all children have at least one document
     )
   )%>%
   ungroup() %>%
@@ -444,4 +447,3 @@ main_merged <- main_merged %>%
     IND_EDU_D1_max = case_when(EDU_D1 == 1 | EDU_D3 == 1 ~ 1,TRUE ~ 0
     )
   )
-
